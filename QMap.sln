@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap", "QMap\QMap.csproj", "{D45362F3-5B75-44D3-8D07-D65E76E132AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Core", "QMap.Core\QMap.Core.csproj", "{E079BE89-9551-409C-BC85-3D67908E8F22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Mapping", "QMap.Mapping\QMap.Mapping.csproj", "{4318EF17-045A-4F76-8174-B1979BE59584}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.SqlServer", "QMap.SqlServer\QMap.SqlServer.csproj", "{98A7C173-41AA-490E-A9A6-C6824447E678}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D45362F3-5B75-44D3-8D07-D65E76E132AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D45362F3-5B75-44D3-8D07-D65E76E132AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D45362F3-5B75-44D3-8D07-D65E76E132AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D45362F3-5B75-44D3-8D07-D65E76E132AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E079BE89-9551-409C-BC85-3D67908E8F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E079BE89-9551-409C-BC85-3D67908E8F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E079BE89-9551-409C-BC85-3D67908E8F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E079BE89-9551-409C-BC85-3D67908E8F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4318EF17-045A-4F76-8174-B1979BE59584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4318EF17-045A-4F76-8174-B1979BE59584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4318EF17-045A-4F76-8174-B1979BE59584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4318EF17-045A-4F76-8174-B1979BE59584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98A7C173-41AA-490E-A9A6-C6824447E678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98A7C173-41AA-490E-A9A6-C6824447E678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98A7C173-41AA-490E-A9A6-C6824447E678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98A7C173-41AA-490E-A9A6-C6824447E678}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {746D0150-3F94-42E7-AC77-7B644637E041}
+	EndGlobalSection
+EndGlobal

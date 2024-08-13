@@ -1,6 +1,6 @@
 ﻿using QMap.Core.Mapping;
 using System.Data;
-using System.Reflection;
+
 namespace QMap.Mapping
 {
     public class QueryMapperBase<T> : IQueryMapper where T : class, new()
@@ -14,21 +14,14 @@ namespace QMap.Mapping
 
         public virtual IEnumerable<T> Map<T>(IDataReader dataReader) where T : class, new() 
         {
-            var typeInfo = typeof(T);
+            List<T> rows = new List<T>();
 
-            var props = typeInfo.GetProperties(BindingFlags.Public);
-
-            var instance = new T();
-
-            T[] rows = new T[dataReader.RecordsAffected];
-
-            rows.ToList().Select(e =>
+            while (dataReader.Read())
             {
-                dataReader.Read();
-                return _entityMapper.Map<T>(dataReader);
-            });
+                rows.Add(_entityMapper.Map<T>(dataReader));
+            }
 
-            return rows.AsEnumerable();
+            return rows;
         }    
     }
 }

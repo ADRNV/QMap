@@ -10,7 +10,11 @@ namespace QMap.Mapping
         {
             var typeInfo = typeof(T);
 
-            var props = typeInfo.GetProperties(BindingFlags.Public);
+            var props = typeInfo.GetProperties(
+                BindingFlags.Public 
+                | BindingFlags.GetProperty 
+                | BindingFlags.SetProperty
+                | BindingFlags.Instance);
 
             var instance = new T();
 

@@ -2,7 +2,7 @@
 
 namespace QMap.Core.Mapping
 {
-    public interface IEntityMapper<T> where T: class, new()
+    public interface IEntityMapper
     {
         T Map<T>(IDataReader dataReader) where T : class, new();
     }

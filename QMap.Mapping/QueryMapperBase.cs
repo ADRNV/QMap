@@ -3,11 +3,11 @@ using System.Data;
 
 namespace QMap.Mapping
 {
-    public class QueryMapperBase<T> : IQueryMapper where T : class, new()
+    public class QueryMapperBase : IQueryMapper
     {
-        private readonly IEntityMapper<T> _entityMapper;
+        private readonly IEntityMapper _entityMapper;
 
-        public QueryMapperBase(IEntityMapper<T> entityMapper)
+        public QueryMapperBase(IEntityMapper entityMapper)
         {
             _entityMapper = entityMapper;
         }

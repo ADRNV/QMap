@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QMap.Core\QMap.Core.csproj" />
+    <ProjectReference Include="..\QMap.Mapping\QMap.Mapping.csproj" />
+  </ItemGroup>
+
 </Project>

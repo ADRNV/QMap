@@ -1,31 +1,67 @@
-﻿using QMap.Core.Mapping;
+﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace QMap.Mapping
 {
-    public class EntityMapper<T> : IEntityMapper<T> where T: class, new()
+    public class EntityMapper : EntityMapperBase
     {
-        public virtual T Map<T>(IDataReader dataReader) where T : class, new()
+        public ReadOnlyCollection<PropertyInfo>? ReflectedPropertyNames
+        {
+            get; 
+            
+            private set;
+        }
+
+        private Delegate MapDelegate;
+        
+        public override T Map<T>(IDataReader dataReader)
         {
             var typeInfo = typeof(T);
 
-            var props = typeInfo.GetProperties(
-                BindingFlags.Public 
-                | BindingFlags.GetProperty 
-                | BindingFlags.SetProperty
-                | BindingFlags.Instance);
-
-            var instance = new T();
-
-            foreach (var prop in props)
+            if(ReflectedPropertyNames is null)
             {
-                var columnValue = dataReader.GetFromColumn(prop.PropertyType, prop.Name);
-
-                prop.SetValue(instance, columnValue);
+                ReflectedPropertyNames = typeInfo.GetProperties(
+                BindingFlags.Public
+                | BindingFlags.GetProperty
+                | BindingFlags.SetProperty
+                | BindingFlags.Instance)
+                    .AsReadOnly();
             }
 
-            return instance;
+            if(MapDelegate is null)
+            {
+                MapDelegate = (Func<IDataReader, T>)BuildMapExpression<T>(dataReader);
+            }
+
+            return ((Func<IDataReader, T>)(MapDelegate)).Invoke(dataReader);    
+        }
+
+        private Func<IDataReader, T> BuildMapExpression<T>(IDataReader dataReader)
+        {
+            var readerParam = Expression.Parameter(typeof(IDataReader));
+
+            var newExp = Expression.New(typeof(T));
+            var memberInit = Expression.MemberInit(newExp, typeof(T).GetProperties()
+              .Select(x => Expression.Bind(x, BuildReadColumnExpression(readerParam, dataReader, x))));
+
+            return Expression.Lambda<Func<IDataReader, T>>(memberInit, readerParam)
+                .Compile();
+        }
+
+        private static Expression BuildReadColumnExpression(Expression readerExpression, IDataReader dataReader, PropertyInfo prop)
+        {
+            var method = typeof(IDataReaderExtensions)
+                .GetMethods()
+                .Where(m => m.Name == (nameof(IDataReaderExtensions.GetFromColumn)))
+                .FirstOrDefault();
+
+            return Expression.Call(type: typeof(IDataReaderExtensions),
+               methodName: method.Name,
+               typeArguments: new Type[] { prop.PropertyType },
+               arguments: new Expression[] { Expression.Constant(dataReader), Expression.Constant(prop.Name) });
         }
     }
 }

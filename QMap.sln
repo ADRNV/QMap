@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A11BDBE0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Tests", "QMap.Tests\QMap.Tests.csproj", "{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.StressTests", "QMap.StressTests\QMap.StressTests.csproj", "{5616FE10-3CA0-4E9E-87EF-0890419BC183}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DataBaseConfig|Any CPU = DataBaseConfig|Any CPU
@@ -53,19 +51,12 @@ Global
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
-		{5616FE10-3CA0-4E9E-87EF-0890419BC183} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {746D0150-3F94-42E7-AC77-7B644637E041}

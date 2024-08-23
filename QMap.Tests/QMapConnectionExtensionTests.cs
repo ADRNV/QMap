@@ -23,8 +23,6 @@ namespace QMap.Tests
 
             _testContext = testContext;
             _testContext.Database.EnsureCreated();
-
-            _outputHelper = outputHelper;
         }
 
         public void Dispose()

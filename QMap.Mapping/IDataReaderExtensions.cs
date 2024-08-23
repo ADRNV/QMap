@@ -27,7 +27,7 @@ namespace QMap.Mapping
             }
             else
             {
-                throw new InvalidOperationException($"Culumn has not mathin to type {typeof(T)}");
+                throw new InvalidOperationException($"Column {columnName} has not mathing in property type {typeof(T)}");
             }
         }
 

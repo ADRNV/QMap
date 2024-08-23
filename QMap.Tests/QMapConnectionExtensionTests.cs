@@ -1,6 +1,7 @@
 using AutoFixture;
 using QMap.Tests.Common;
 using QMap.Tests.Common.DataBase;
+using System.Data.SqlClient;
 
 namespace QMap.Tests
 {
@@ -52,6 +53,77 @@ namespace QMap.Tests
                 connection.Close();
 
                 Assert.Equivalent(expectedEntity, factEntity);
+            });
+        }
+
+        [Fact]
+        public void QueryReturnsEmptyEnumerableWhenNotRowsOfType() 
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var expectedEntities = _testContext.TypesTestEntity
+                .Where((e) => false)
+                .AsEnumerable();
+
+                IEnumerable<TypesTestEntity> factEntity;
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                factEntity = connection.Query<TypesTestEntity>("select * from TypesTestEntity where 1 = 0");
+
+                connection.Close();
+
+                Assert.Equivalent(expectedEntities, factEntity);
+            });
+        }
+
+        [Fact]
+        public void QueryThrowsExceptionWhenWringSql()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                using var connection = c.Create();
+
+                connection.Open();
+                
+                Assert.Throws<SqlException>(() =>
+                {
+                    connection.Query<TypesTestEntity>("select * from where 1 = 0");
+                });
+
+                connection.Close();
+            });
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(0)]
+        public void QueryThrowsExceptionWhenNotMatchEntity(int count)
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var expectedEntity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .CreateMany(count);
+
+                _testContext.TypesTestEntity.AddRange(expectedEntity);
+
+                _testContext.SaveChanges();
+                
+                using var connection = c.Create();
+
+                connection.Open();
+
+                Assert.Throws<InvalidOperationException>(() =>
+                {
+                   connection.Query<WrongEntity>("select * from TypesTestEntity");
+                });
+
+                connection.Close();
             });
         }
     }

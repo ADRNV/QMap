@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using QMap.Core;
-using System.Data.Common;
-using System.Data.SqlClient;
 using QMap.SqlServer;
+using System.Data.SqlClient;
 
 namespace QMap.Tests.Common
 {
@@ -10,7 +9,7 @@ namespace QMap.Tests.Common
     {
         public SqlServerQMapConnectionFactory(IConfiguration configuration) : base(configuration)
         {
-            
+
         }
 
         public override IQMapConnection Create()

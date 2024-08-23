@@ -25,7 +25,7 @@ namespace QMap.Mapping
                 prop.SetValue(instance, columnValue);
             }
 
-            return instance;      
+            return instance;
         }
     }
 }

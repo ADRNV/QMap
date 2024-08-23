@@ -12,7 +12,7 @@ namespace QMap.Mapping
             _entityMapper = entityMapper;
         }
 
-        public virtual IEnumerable<T> Map<T>(IDataReader dataReader) where T : class, new() 
+        public virtual IEnumerable<T> Map<T>(IDataReader dataReader) where T : class, new()
         {
             List<T> rows = new List<T>();
 
@@ -22,6 +22,6 @@ namespace QMap.Mapping
             }
 
             return rows;
-        }    
+        }
     }
 }

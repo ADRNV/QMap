@@ -2,7 +2,7 @@
 
 namespace QMap.Core
 {
-    public abstract class QMapConnectionAdapterBase<C> : IQMapConnection where C: IDbConnection
+    public abstract class QMapConnectionAdapterBase<C> : IQMapConnection where C : IDbConnection
     {
         protected C _connection;
 
@@ -11,10 +11,10 @@ namespace QMap.Core
             _connection = connection;
         }
 
-        public virtual string ConnectionString 
-        { 
+        public virtual string ConnectionString
+        {
             get => _connection.ConnectionString;
-            
+
             set
             {
                 _connection.ConnectionString = value;

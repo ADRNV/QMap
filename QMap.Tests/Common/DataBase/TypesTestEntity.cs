@@ -3,7 +3,7 @@
     public class TypesTestEntity
     {
         public int Id { get; set; }
-        
+
         public int IntField { get; set; }
 
         public string StringField { get; set; }

@@ -21,7 +21,7 @@ namespace QMap.Mapping
 
         public static T GetFromColumn<T>(this IDataReader dataReader, string columnName)
         {
-            if(dataReader.TryGetOrdinal(columnName, out int order))
+            if (dataReader.TryGetOrdinal(columnName, out int order))
             {
                 return (T)dataReader.GetValue(order);
             }

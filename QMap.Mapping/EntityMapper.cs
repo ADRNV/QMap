@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,18 +9,18 @@ namespace QMap.Mapping
     {
         public ReadOnlyCollection<PropertyInfo>? ReflectedPropertyNames
         {
-            get; 
-            
+            get;
+
             private set;
         }
 
         private Delegate MapDelegate;
-        
+
         public override T Map<T>(IDataReader dataReader)
         {
             var typeInfo = typeof(T);
 
-            if(ReflectedPropertyNames is null)
+            if (ReflectedPropertyNames is null)
             {
                 ReflectedPropertyNames = typeInfo.GetProperties(
                 BindingFlags.Public
@@ -31,12 +30,12 @@ namespace QMap.Mapping
                     .AsReadOnly();
             }
 
-            if(MapDelegate is null)
+            if (MapDelegate is null)
             {
                 MapDelegate = (Func<IDataReader, T>)BuildMapExpression<T>(dataReader);
             }
 
-            return ((Func<IDataReader, T>)(MapDelegate)).Invoke(dataReader);    
+            return ((Func<IDataReader, T>)(MapDelegate)).Invoke(dataReader);
         }
 
         private Func<IDataReader, T> BuildMapExpression<T>(IDataReader dataReader)

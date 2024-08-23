@@ -6,7 +6,7 @@ namespace QMap.Tests.Common.DataBase
     {
         public TestContext(DbContextOptions options) : base(options)
         {
-            
+
         }
 
         public DbSet<TypesTestEntity> TypesTestEntity { get; set; }

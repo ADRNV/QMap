@@ -1,13 +1,7 @@
-using System.Data.SqlClient;
 using AutoFixture;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using QMap.Core;
-using QMap.SqlServer;
 using QMap.Tests.Common;
 using QMap.Tests.Common.DataBase;
-using Xunit.Abstractions;
-using Xunit.Sdk;
+
 namespace QMap.Tests
 {
     public class QMapConnectionExtensionTests : IDisposable
@@ -56,7 +50,7 @@ namespace QMap.Tests
                 factEntity = connection.Query<TypesTestEntity>("select * from TypesTestEntity");
 
                 connection.Close();
-                
+
                 Assert.Equivalent(expectedEntity, factEntity);
             });
         }

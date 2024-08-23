@@ -2,7 +2,7 @@
 
 namespace QMap.Core.Command
 {
-    public abstract class QMapCommandAdapterBase<T> : IQMapCommand where T: IDbCommand
+    public abstract class QMapCommandAdapterBase<T> : IQMapCommand where T : IDbCommand
     {
         protected T _command;
 
@@ -11,53 +11,54 @@ namespace QMap.Core.Command
             _command = command;
         }
 
-        public virtual string CommandText 
-        { 
-            get => _command.CommandText; 
-            set => _command.CommandText = value; 
+        public virtual string CommandText
+        {
+            get => _command.CommandText;
+            set => _command.CommandText = value;
         }
-        public virtual int CommandTimeout { 
+        public virtual int CommandTimeout
+        {
 
             get => _command.CommandTimeout;
-            
+
             set
             {
                 _command.CommandTimeout = value;
             }
         }
-        public virtual CommandType CommandType 
-        { 
+        public virtual CommandType CommandType
+        {
             get => _command.CommandType;
 
             set
             {
                 _command.CommandType = value;
-            } 
+            }
         }
-        public virtual IDbConnection? Connection 
+        public virtual IDbConnection? Connection
         {
             get => _command.Connection;
-            
+
             set
             {
                 _command.Connection = value;
             }
         }
 
-        public virtual IDataParameterCollection Parameters 
-        { 
-            get => _command.Parameters; 
+        public virtual IDataParameterCollection Parameters
+        {
+            get => _command.Parameters;
         }
-        public virtual IDbTransaction? Transaction 
-        { 
+        public virtual IDbTransaction? Transaction
+        {
             get => _command.Transaction;
-            
-            set 
+
+            set
             {
                 _command.Transaction = value;
-            } 
+            }
         }
-        public virtual UpdateRowSource UpdatedRowSource 
+        public virtual UpdateRowSource UpdatedRowSource
         {
             get => _command.UpdatedRowSource;
 

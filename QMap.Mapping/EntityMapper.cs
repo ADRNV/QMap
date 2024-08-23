@@ -61,7 +61,7 @@ namespace QMap.Mapping
             return Expression.Call(type: typeof(IDataReaderExtensions),
                methodName: method.Name,
                typeArguments: new Type[] { prop.PropertyType },
-               arguments: new Expression[] { Expression.Constant(dataReader), Expression.Constant(prop.Name) });
+               arguments: new Expression[] { readerExpression, Expression.Constant(prop.Name) });
         }
     }
 }

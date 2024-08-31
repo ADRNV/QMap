@@ -9,6 +9,14 @@ namespace QMap
     {
         private readonly static ConcurrentDictionary<Type, IEntityMapper> _mappersCache = new();
 
+        /// <summary>
+        /// Execute query and map to <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">Connection</param>
+        /// <param name="sql">Qery text</param>
+        /// <param name="customMapper">Custom mapper if required, else uses base implementation"/></param>
+        /// <returns></returns>
         public static IEnumerable<T> Query<T>(this IQMapConnection connection, string sql, IEntityMapper? customMapper = null) where T : class, new()
         {
             var mapper = _mappersCache.GetOrAdd(typeof(T),

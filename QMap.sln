@@ -15,6 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A11BDBE0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Tests", "QMap.Tests\QMap.Tests.csproj", "{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.SqlBuilder", "QMap.SqlBuilder\QMap.SqlBuilder.csproj", "{21EB1C84-35DB-4632-924B-9AA659A17BA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.SqlBuilder.Tests", "QMap.SqlBuilder.Tests\QMap.SqlBuilder.Tests.csproj", "{3312932A-ADC5-4682-ABE3-703EAA200DE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DataBaseConfig|Any CPU = DataBaseConfig|Any CPU
@@ -51,12 +55,25 @@ Global
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21EB1C84-35DB-4632-924B-9AA659A17BA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
+		{3312932A-ADC5-4682-ABE3-703EAA200DE8} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {746D0150-3F94-42E7-AC77-7B644637E041}

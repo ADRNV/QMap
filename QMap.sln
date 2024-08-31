@@ -15,9 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A11BDBE0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Tests", "QMap.Tests\QMap.Tests.csproj", "{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.SqlBuilder", "QMap.SqlBuilder\QMap.SqlBuilder.csproj", "{21EB1C84-35DB-4632-924B-9AA659A17BA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.SqlBuilder", "QMap.SqlBuilder\QMap.SqlBuilder.csproj", "{21EB1C84-35DB-4632-924B-9AA659A17BA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.SqlBuilder.Tests", "QMap.SqlBuilder.Tests\QMap.SqlBuilder.Tests.csproj", "{3312932A-ADC5-4682-ABE3-703EAA200DE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.SqlBuilder.Tests", "QMap.SqlBuilder.Tests\QMap.SqlBuilder.Tests.csproj", "{3312932A-ADC5-4682-ABE3-703EAA200DE8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{C0627B39-40F3-4110-9EF5-0130B47AD2F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.Benchmarks", "QMap.Benchmarks\QMap.Benchmarks.csproj", "{FF000355-039D-42EB-A120-888762294DC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.Tests.Share", "QMap.Tests.Share\QMap.Tests.Share.csproj", "{02B93221-DE00-4425-9A62-E0DFED3518EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +73,18 @@ Global
 		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3312932A-ADC5-4682-ABE3-703EAA200DE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF000355-039D-42EB-A120-888762294DC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +92,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B4CA2E19-2197-4B07-AEE9-54CBAB5595A9} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
 		{3312932A-ADC5-4682-ABE3-703EAA200DE8} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
+		{C0627B39-40F3-4110-9EF5-0130B47AD2F4} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
+		{FF000355-039D-42EB-A120-888762294DC4} = {C0627B39-40F3-4110-9EF5-0130B47AD2F4}
+		{02B93221-DE00-4425-9A62-E0DFED3518EE} = {A11BDBE0-176D-4484-9F21-B64FB6ECC919}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {746D0150-3F94-42E7-AC77-7B644637E041}

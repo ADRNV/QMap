@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using QMap.Core;
 
-namespace QMap.Tests.Common
+namespace QMap.Tests.Share
 {
     public abstract class IQMapConnectionFactoryBase
     {

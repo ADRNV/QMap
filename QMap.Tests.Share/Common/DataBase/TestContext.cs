@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace QMap.Tests.Common.DataBase
+namespace QMap.Tests.Share.DataBase
 {
     public class TestContext : DbContext
     {

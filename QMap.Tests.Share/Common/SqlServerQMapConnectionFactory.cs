@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using QMap.Core;
 using QMap.SqlServer;
+using QMap.Tests.Share;
 using System.Data.SqlClient;
 
 namespace QMap.Tests.Common

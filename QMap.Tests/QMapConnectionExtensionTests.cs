@@ -1,6 +1,6 @@
 using AutoFixture;
-using QMap.Tests.Common;
-using QMap.Tests.Common.DataBase;
+using QMap.Tests.Share;
+using QMap.Tests.Share.DataBase;
 using System.Data.SqlClient;
 
 namespace QMap.Tests

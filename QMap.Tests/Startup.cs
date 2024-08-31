@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QMap.Tests.Common;
-using QMap.Tests.Common.DataBase;
+using QMap.Tests.Share;
+using QMap.Tests.Share.DataBase;
 
 namespace QMap.Tests
 {

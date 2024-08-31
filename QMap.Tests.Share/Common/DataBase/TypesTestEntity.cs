@@ -1,4 +1,4 @@
-﻿namespace QMap.Tests.Common.DataBase
+﻿namespace QMap.Tests.Share.DataBase
 {
     public class TypesTestEntity
     {

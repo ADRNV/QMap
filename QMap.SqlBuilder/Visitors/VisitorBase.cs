@@ -32,6 +32,8 @@ namespace QMap.SqlBuilder.Visitors
                 case ExpressionType.GreaterThan:
                 case ExpressionType.AndAlso:
                     return new BinaryVisitor((BinaryExpression)node, ref stringBuilder);
+                case ExpressionType.MemberAccess:
+                    return new MemberVisitor((MemberExpression)node, ref stringBuilder);
                 default:
                     throw new InvalidOperationException("Cant find node type");
             }

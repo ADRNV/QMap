@@ -3,6 +3,12 @@ namespace QMap.SqlBuilder
 {
     public interface IQueryBuilder
     {
-        public string BuildWhere(LambdaExpression expression);
+         void BuildWhere(LambdaExpression expression);
+
+        void BuildFrom(Type entity, params Type[] entities);
+
+        void BuidSelect(Type entity);
+
+        string Sql {  get; }
     }
 }

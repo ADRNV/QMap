@@ -15,13 +15,14 @@ namespace QMap.SqlBuilder.Visitors
         public override IEnumerable<IVisitor> Visit()
         {
             _sql.Append("(");
-            var left = CreateFromExpression(_node.Right, ref _sql)
-                .Visit();
-            
-            _sql.Append(MapOperators(_node.NodeType));
 
             var right = CreateFromExpression(_node.Left, ref _sql)
                 .Visit();
+
+            _sql.Append(MapOperators(_node.NodeType));
+
+            var left = CreateFromExpression(_node.Right, ref _sql)
+               .Visit();
 
             _sql.Append(")");
 

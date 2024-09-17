@@ -40,7 +40,8 @@ namespace QMap.SqlBuilder.Tests
 
             queryBuilder
                 .Select(typeof(TypesTestEntity))
-                .From(typeof(TypesTestEntity));
+                .From(typeof(TypesTestEntity))
+                .Build();
         }
 
         [Fact]
@@ -51,7 +52,8 @@ namespace QMap.SqlBuilder.Tests
             queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where((TypesTestEntity e) => 1 == 1);
+                .Where((TypesTestEntity e) => 1 == 1)
+                .Build();
         }
 
         [Fact]

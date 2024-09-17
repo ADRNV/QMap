@@ -2,6 +2,6 @@
 {
     public class WrongEntity
     {
-        public int NotExist {  get; set; }
+        public int NotExist { get; set; }
     }
 }

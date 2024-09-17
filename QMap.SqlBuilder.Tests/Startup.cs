@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using QMap.Tests.Share.DataBase;
-using QMap.Tests.Share;
+﻿using Microsoft.Extensions.DependencyInjection;
 using QMap.Tests.Share.Helpers.Sql;
 
 namespace QMap.SqlBuilder.Tests
@@ -13,7 +10,7 @@ namespace QMap.SqlBuilder.Tests
             services.AddSingleton<IList<IParser>>(sp =>
             {
                 return new List<IParser>()
-                { 
+                {
                     new TSqlParser()
                 };
             });

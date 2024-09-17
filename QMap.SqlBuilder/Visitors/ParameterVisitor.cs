@@ -5,7 +5,7 @@ namespace QMap.SqlBuilder.Visitors
 {
     public class ParameterVisitor : VisitorBase<ParameterExpression>
     {
-        private StringBuilder _sql {  get; set; }
+        private StringBuilder _sql { get; set; }
 
         public ParameterExpression ParameterExpression { get; set; }
 

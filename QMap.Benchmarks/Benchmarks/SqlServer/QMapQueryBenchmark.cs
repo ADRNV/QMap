@@ -1,11 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
-using QMap;
 using QMap.SqlServer;
-using QMap.Core;
 using QMap.Tests.Share.DataBase;
 using System.Data.SqlClient;
-using Dapper;
 
 namespace QMap.Benchmarks.Benchmarks.SqlServer
 {
@@ -15,7 +12,7 @@ namespace QMap.Benchmarks.Benchmarks.SqlServer
     public class QMapQueryBenchmark
     {
         public static string ConnectionString = "Server=localhost;Database=TestDb;Integrated Security=true;TrustServerCertificate=Yes;Encrypt=false";
-        
+
         [Benchmark]
         public void QMapQueryMethodBenchmark()
         {
@@ -28,7 +25,7 @@ namespace QMap.Benchmarks.Benchmarks.SqlServer
             connection.Close();
         }
 
-        [Benchmark(Baseline = true)]      
+        [Benchmark(Baseline = true)]
         public void DapperQueryMethodBenchmark()
         {
             using var connection = new SqlConnection(ConnectionString);
@@ -37,7 +34,7 @@ namespace QMap.Benchmarks.Benchmarks.SqlServer
 
             Dapper.SqlMapper
                 .Query<TypesTestEntity>(connection, "select * from TypesTestEntity");
-            
+
             connection.Close();
         }
     }

@@ -27,10 +27,10 @@ namespace QMap.SqlBuilder
 
             set => _sql = value;
         }
-        
+
         public string Build()
         {
-            if(!CanBeTerminalStatement) throw new InvalidOperationException();
+            if (!CanBeTerminalStatement) throw new InvalidOperationException();
 
             return _sql;
         }
@@ -56,8 +56,8 @@ namespace QMap.SqlBuilder
 
         public ISelectBuilder BuidSelect(Expression type)
         {
-             //TODO Add selecting by members list and expression
-             _sql += "select * ";
+            //TODO Add selecting by members list and expression
+            _sql += "select * ";
 
             return this;
         }
@@ -81,7 +81,7 @@ namespace QMap.SqlBuilder
             get => _sql;
             set => _sql = value;
         }
-      
+
         public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities)
         {
             _sql += $" from {entity.Name} " + _aliases.GetOrAdd(entity.Name, (ak) => NameToAlias(entity.Name));

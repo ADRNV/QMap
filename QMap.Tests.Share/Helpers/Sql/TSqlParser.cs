@@ -13,7 +13,7 @@ namespace QMap.Tests.Share.Helpers.Sql
 
         public TSqlParser()
         {
-            
+
         }
 
         public List<string> Parse(string sql)
@@ -21,9 +21,9 @@ namespace QMap.Tests.Share.Helpers.Sql
             TSql100Parser parser = new TSql100Parser(false);
 
             IList<ParseError> errors;
-            
+
             var d = parser.Parse(new StringReader(sql), out errors);
-            
+
             if (errors != null && errors.Count > 0)
             {
                 List<string> errorList = new List<string>();

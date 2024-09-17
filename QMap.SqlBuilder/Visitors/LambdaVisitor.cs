@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
-using System.Xml.Linq;
 
 namespace QMap.SqlBuilder.Visitors
 {
@@ -25,7 +24,7 @@ namespace QMap.SqlBuilder.Visitors
             //}
 
             return new IVisitor[] {
-                
+
                 CreateFromExpression(_node.Body, ref Sql)
             };
         }

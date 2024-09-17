@@ -19,8 +19,8 @@ namespace QMap.SqlBuilder
 
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
         {
-           return new SelectBuilder()
-                .BuidSelect(entity);
+            return new SelectBuilder()
+                 .BuidSelect(entity);
         }
 
         public static ISelectBuilder Select(Expression entity)

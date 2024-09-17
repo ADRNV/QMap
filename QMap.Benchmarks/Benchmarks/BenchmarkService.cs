@@ -1,7 +1,4 @@
-﻿
-using Microsoft.Extensions.Configuration;
-
-namespace QMap.Benchmarks.Benchmarks
+﻿namespace QMap.Benchmarks.Benchmarks
 {
     public class BenchmarkService : IBenchmarkService
     {
@@ -18,7 +15,7 @@ namespace QMap.Benchmarks.Benchmarks
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            if(_conditions.Count() > 0)
+            if (_conditions.Count() > 0)
             {
                 _conditions.ToList()
                .ForEach(a =>
@@ -26,7 +23,7 @@ namespace QMap.Benchmarks.Benchmarks
                    a?.Invoke();
                });
             }
-           
+
             _bechmarkRunner.Invoke();
 
             return Task.CompletedTask;

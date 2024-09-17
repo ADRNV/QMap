@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace QMap.SqlBuilder.Abstractions
+﻿namespace QMap.SqlBuilder.Abstractions
 {
     public interface IQueryBuilder
     {

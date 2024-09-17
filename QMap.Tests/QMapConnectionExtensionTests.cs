@@ -57,7 +57,7 @@ namespace QMap.Tests
         }
 
         [Fact]
-        public void QueryReturnsEmptyEnumerableWhenNotRowsOfType() 
+        public void QueryReturnsEmptyEnumerableWhenNotRowsOfType()
         {
             _connectionFactories.ForEach(c =>
             {
@@ -87,7 +87,7 @@ namespace QMap.Tests
                 using var connection = c.Create();
 
                 connection.Open();
-                
+
                 Assert.Throws<SqlException>(() =>
                 {
                     connection.Query<TypesTestEntity>("select * from where 1 = 0");
@@ -113,14 +113,14 @@ namespace QMap.Tests
                 _testContext.TypesTestEntity.AddRange(expectedEntity);
 
                 _testContext.SaveChanges();
-                
+
                 using var connection = c.Create();
 
                 connection.Open();
 
                 Assert.Throws<InvalidOperationException>(() =>
                 {
-                   connection.Query<WrongEntity>("select * from TypesTestEntity");
+                    connection.Query<WrongEntity>("select * from TypesTestEntity");
                 });
 
                 connection.Close();

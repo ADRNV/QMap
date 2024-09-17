@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore.SqlServer;
-using Microsoft.Extensions.DependencyInjection;
-using QMap.Tests.Share.DataBase;
-using Microsoft.Extensions.Configuration;
+﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
-using AutoFixture;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using QMap.Tests.Share.DataBase;
 
 namespace QMap.Benchmarks.DI
 {
@@ -14,7 +13,7 @@ namespace QMap.Benchmarks.DI
 
         private IConfiguration _configuration;
 
-        public SqlServerDependency(HostApplicationBuilder host) 
+        public SqlServerDependency(HostApplicationBuilder host)
         {
             _host = host;
         }

@@ -1,28 +1,32 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.SqlBuilder.Abstractions;
+using System.Linq.Expressions;
 
 namespace QMap.SqlBuilder
 {
     public static class QueryBuilderExtensions
     {
-        public static IQueryBuilder From(this IQueryBuilder queryBuilder, Type entity, params Type[] entities)
+        public static IFromBuilder From(this ISelectBuilder queryBuilder, Type entity, params Type[] entities)
         {
-            queryBuilder.BuildFrom(entity, entities);
-
-            return queryBuilder;
+            return new FromBuilder()
+                .BuildFrom(queryBuilder, entity, entities);
         }
 
-        public static IQueryBuilder Where(this IQueryBuilder queryBuilder, LambdaExpression expression)
+        public static IQueryBuilder Where(this IFromBuilder queryBuilder, LambdaExpression expression)
         {
-            queryBuilder.BuildWhere(expression);
-
-            return queryBuilder;
+            return new WhereBuilder()
+               .BuildWhere(queryBuilder, expression);
         }
 
-        public static IQueryBuilder Select(this IQueryBuilder queryBuilder, Type entity)
+        public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
         {
-            queryBuilder.BuidSelect(entity);
+           return new SelectBuilder()
+                .BuidSelect(entity);
+        }
 
-            return queryBuilder;
+        public static ISelectBuilder Select(Expression entity)
+        {
+            return new SelectBuilder()
+                 .BuidSelect(entity);
         }
 
         public static string Build(this IQueryBuilder queryBuilder)

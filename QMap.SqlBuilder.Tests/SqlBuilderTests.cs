@@ -3,7 +3,7 @@ using QMap.Tests.Share.Helpers.Sql;
 
 namespace QMap.SqlBuilder.Tests
 {
-    public class SqlBuilderTests : IDisposable
+    public class SqlBuilderTests
     {
         private IList<IParser> _parsers;
 
@@ -13,47 +13,51 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
-        public void BuildWhereNoThrowsErrors()
+        public void BuildNonTerminalStatementThrowsInvalidOperationException()
         {
-            QueryBuilder queryBuilder = new QueryBuilder();
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
-            queryBuilder.BuildWhere((int i) => i == 1);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                queryBuilder.Build();
+            });
         }
 
-        public void BuildFromNoThrowsErrors()
+        public void BuildWithTerminalSttementNoThrowsErrors()
         {
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
-        }
-
-        public void BuildSelectNoThrowsErrors()
-        {
-
+            queryBuilder
+                .Select(typeof(TypesTestEntity))
+                .From(typeof(TypesTestEntity))
+                .Build();
         }
 
         [Fact]
-        public void BuildWhereWithClassNoThrowsErrors()
+        public void BuildWithoutWhereNoThrowsErrors()
         {
-            QueryBuilder queryBuilder = new QueryBuilder();
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
-
+            queryBuilder
+                .Select(typeof(TypesTestEntity))
+                .From(typeof(TypesTestEntity));
         }
 
         [Fact]
         public void FullSqlBuildNoThrowsErrors()
         {
-            QueryBuilder queryBuilder = new QueryBuilder();
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
-            var sql = queryBuilder
+            queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where((TypesTestEntity e) => e.Id == 1)
-                .Build();
+                .Where((TypesTestEntity e) => 1 == 1);
         }
 
         [Fact]
         public void FullSqlBuildWithParamsNoThrowsErrors()
         {
-            QueryBuilder queryBuilder = new QueryBuilder();
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -65,7 +69,7 @@ namespace QMap.SqlBuilder.Tests
         [Fact]
         public void FullSqlBuildWitoutSyntaxErrosInAllParsers()
         {
-            QueryBuilder queryBuilder = new QueryBuilder();
+            StatementsBuilders queryBuilder = new StatementsBuilders();
 
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -79,11 +83,6 @@ namespace QMap.SqlBuilder.Tests
 
                 Assert.Null(errors);
             });
-        }
-
-        public void Dispose()
-        {
-            
         }
     }
 }

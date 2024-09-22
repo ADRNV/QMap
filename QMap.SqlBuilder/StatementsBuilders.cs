@@ -49,7 +49,7 @@ namespace QMap.SqlBuilder
 
         public ISelectBuilder BuidSelect(Type type)
         {
-            _sql += "select * ";
+            Sql += "select * ";
 
             return this;
         }
@@ -57,7 +57,7 @@ namespace QMap.SqlBuilder
         public ISelectBuilder BuidSelect(Expression type)
         {
             //TODO Add selecting by members list and expression
-            _sql += "select * ";
+            Sql += "select * ";
 
             return this;
         }
@@ -72,6 +72,11 @@ namespace QMap.SqlBuilder
     {
         private ConcurrentDictionary<string, string> _aliases = new ConcurrentDictionary<string, string>();
 
+        public ConcurrentDictionary<string, string> Aliases
+        {
+            get => _aliases;
+        }
+
         internal bool CanBeTerminalStatement { get => true; }
 
         private string _sql = "";
@@ -84,7 +89,7 @@ namespace QMap.SqlBuilder
 
         public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities)
         {
-            _sql += $" from {entity.Name} " + _aliases.GetOrAdd(entity.Name, (ak) => NameToAlias(entity.Name));
+            this.Sql += $"{quryBuilder.Sql}" + $" from {entity.Name} " + _aliases.GetOrAdd(entity.Name, (ak) => NameToAlias(entity.Name));
 
             return this;
         }
@@ -119,23 +124,30 @@ namespace QMap.SqlBuilder
             set => _sql = value;
         }
 
-        public IWhereBuilder BuildWhere(IFromBuilder fromBuilder, LambdaExpression expression)
+        public IWhereBuilder BuildWhere<T>(IFromBuilder fromBuilder, LambdaExpression expression)
         {
-            if (expression.ReturnType != typeof(bool))
-            {
-                throw new ArgumentException("Only bool expressions can be translated to WHERE expression");
-            }
-
             var visitor = new LambdaVisitor(expression);
 
             visitor.Visit()
                 .First()
                 .Visit();
 
-            fromBuilder.Sql += " where " + visitor.Sql.ToString();
+            this.Sql += $"{fromBuilder.Sql}" + " where " + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
 
             return this;
         }
+
+        private string PushAliases(string sql, ConcurrentDictionary<string, string> aliases)
+        {
+            var withlAliases = "";
+
+            foreach(var type in aliases.Keys)
+            {
+                withlAliases = sql.Replace(type, aliases[type]);
+            }
+
+            return withlAliases;
+        } 
 
         public string Build()
         {

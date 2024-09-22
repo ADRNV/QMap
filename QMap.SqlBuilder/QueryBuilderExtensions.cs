@@ -11,10 +11,10 @@ namespace QMap.SqlBuilder
                 .BuildFrom(queryBuilder, entity, entities);
         }
 
-        public static IQueryBuilder Where(this IFromBuilder queryBuilder, LambdaExpression expression)
+        public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression)
         {
             return new WhereBuilder()
-               .BuildWhere(queryBuilder, expression);
+               .BuildWhere<T>(queryBuilder, expression);
         }
 
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
@@ -31,7 +31,7 @@ namespace QMap.SqlBuilder
 
         public static string Build(this IQueryBuilder queryBuilder)
         {
-            return queryBuilder.Sql;
+            return queryBuilder.Build();
         }
     }
 }

@@ -4,6 +4,6 @@ namespace QMap.SqlBuilder.Abstractions
 {
     public interface IWhereBuilder : IQueryBuilder
     {
-        IWhereBuilder BuildWhere(IFromBuilder quryBuilder, LambdaExpression lambdaExpression);
+        IWhereBuilder BuildWhere<T>(IFromBuilder quryBuilder, LambdaExpression lambdaExpression);
     }
 }

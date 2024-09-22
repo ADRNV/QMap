@@ -36,6 +36,8 @@ namespace QMap.SqlBuilder.Visitors
                 ExpressionType.Equal => "=",
                 ExpressionType.NotEqual => "!=",
                 ExpressionType.GreaterThan => ">",
+                ExpressionType.GreaterThanOrEqual => ">=",
+                ExpressionType.LessThanOrEqual => "<=",
                 ExpressionType.LessThan => "<",
                 ExpressionType.AndAlso => "and",
                 ExpressionType.Or => "or",

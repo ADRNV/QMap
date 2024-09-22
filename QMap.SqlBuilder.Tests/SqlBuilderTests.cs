@@ -1,5 +1,6 @@
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
+using System.Linq.Expressions;
 
 namespace QMap.SqlBuilder.Tests
 {
@@ -38,7 +39,7 @@ namespace QMap.SqlBuilder.Tests
         {
             StatementsBuilders queryBuilder = new StatementsBuilders();
 
-            queryBuilder
+            var s = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
                 .Build();
@@ -52,7 +53,7 @@ namespace QMap.SqlBuilder.Tests
             queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where((TypesTestEntity e) => 1 == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
                 .Build();
         }
 
@@ -64,7 +65,7 @@ namespace QMap.SqlBuilder.Tests
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where((TypesTestEntity e, int id) => e.Id == id)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 1)
                 .Build();
         }
 
@@ -76,7 +77,7 @@ namespace QMap.SqlBuilder.Tests
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where((TypesTestEntity e, int id) => e.Id == id)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 2)
                 .Build();
 
             _parsers.ToList().ForEach(p =>

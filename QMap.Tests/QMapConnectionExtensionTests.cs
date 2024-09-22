@@ -1,4 +1,5 @@
 using AutoFixture;
+using QMap.Core;
 using QMap.Tests.Share;
 using QMap.Tests.Share.DataBase;
 using System.Data.SqlClient;
@@ -124,6 +125,37 @@ namespace QMap.Tests
                 });
 
                 connection.Close();
+            });
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        [InlineData(100)]
+        public void WhereMapRowRights(int count)
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var expectedEntity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .CreateMany(count);
+
+                _testContext.TypesTestEntity.AddRange(expectedEntity);
+
+                _testContext.SaveChanges();
+
+                IEnumerable<TypesTestEntity> factEntity;
+
+                using var connection = c.Create();
+
+                connection.Open();
+                //TSQL errors when parse True constant
+                factEntity = connection.Where<TypesTestEntity>((TypesTestEntity e) => e.Id == e.Id);
+
+                connection.Close();
+
+                Assert.Equivalent(expectedEntity, factEntity);
             });
         }
     }

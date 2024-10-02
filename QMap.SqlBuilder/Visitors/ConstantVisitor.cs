@@ -26,7 +26,7 @@ namespace QMap.SqlBuilder.Visitors
             {
                 _sql.Append($" {ConstantNode.Value} ");
             }
-          
+
             return null;
         }
     }

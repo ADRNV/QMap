@@ -1,5 +1,4 @@
-﻿using QMap.Core.Dialects;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace QMap.SqlBuilder.Abstractions
 {
@@ -7,6 +6,6 @@ namespace QMap.SqlBuilder.Abstractions
     {
         ConcurrentDictionary<string, string> Aliases { get; }
 
-        public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities);     
+        public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities);
     }
 }

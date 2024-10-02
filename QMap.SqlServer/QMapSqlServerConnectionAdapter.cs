@@ -6,7 +6,7 @@ namespace QMap.SqlServer
 {
     public class QMapSqlServerConnectionAdapter : QMapConnectionAdapterBase<SqlConnection>
     {
-        public override ISqlDialect Dialect => new TSqlDialect(); 
+        public override ISqlDialect Dialect => new TSqlDialect();
 
         public QMapSqlServerConnectionAdapter(SqlConnection connection) : base(connection)
         {

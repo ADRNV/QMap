@@ -6,8 +6,8 @@ namespace QMap.Core.Dialects
         public string ParameterName { get => "@"; set => throw new NotImplementedException(); }
         public string Quotes { get => "'"; set => throw new NotImplementedException(); }
 
-        public Dictionary<string, string> Constants => new Dictionary<string, string>() 
-        { 
+        public Dictionary<string, string> Constants => new Dictionary<string, string>()
+        {
             {"True", "true" },
             {"False", "false" }
         };

@@ -15,6 +15,6 @@ namespace QMap.SqlServer
                 { "False", "0" },
             };
         }
-        
+
     }
 }

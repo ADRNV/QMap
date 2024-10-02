@@ -1,9 +1,8 @@
-﻿using QMap.SqlBuilder.Abstractions;
-using QMap.Core;
+﻿using QMap.Core.Dialects;
+using QMap.SqlBuilder.Abstractions;
 using QMap.SqlBuilder.Visitors;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
-using QMap.Core.Dialects;
 
 namespace QMap.SqlBuilder
 {
@@ -161,13 +160,13 @@ namespace QMap.SqlBuilder
         {
             var withlAliases = "";
 
-            foreach(var type in aliases.Keys)
+            foreach (var type in aliases.Keys)
             {
                 withlAliases = sql.Replace(type, aliases[type]);
             }
 
             return withlAliases;
-        } 
+        }
 
         public string Build()
         {

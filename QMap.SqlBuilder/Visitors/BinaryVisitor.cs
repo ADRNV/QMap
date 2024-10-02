@@ -1,5 +1,4 @@
-﻿using QMap.Core;
-using QMap.Core.Dialects;
+﻿using QMap.Core.Dialects;
 using System.Linq.Expressions;
 using System.Text;
 

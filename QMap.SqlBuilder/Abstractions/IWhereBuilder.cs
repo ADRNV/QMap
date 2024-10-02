@@ -1,5 +1,4 @@
-﻿using QMap.Core.Dialects;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace QMap.SqlBuilder.Abstractions
 {

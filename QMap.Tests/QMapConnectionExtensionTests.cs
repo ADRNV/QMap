@@ -1,5 +1,4 @@
 using AutoFixture;
-using QMap.Core;
 using QMap.Tests.Share;
 using QMap.Tests.Share.DataBase;
 using System.Data.SqlClient;

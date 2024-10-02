@@ -2,7 +2,6 @@ using QMap.Core.Dialects;
 using QMap.SqlServer;
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
-using System.Linq.Expressions;
 
 namespace QMap.SqlBuilder.Tests
 {
@@ -30,7 +29,7 @@ namespace QMap.SqlBuilder.Tests
                 {
                     queryBuilder.Build();
                 });
-            });         
+            });
         }
 
         public void BuildWithTerminalSttementNoThrowsErrors()
@@ -78,7 +77,7 @@ namespace QMap.SqlBuilder.Tests
                 .Build();
         }
 
-        
+
         [Fact]
         public void FullSqlBuildWitoutSyntaxErrosInAllParsers()
         {

@@ -8,7 +8,7 @@ namespace QMap.SqlBuilder.Visitors
     {
         protected readonly E _node;
 
-        protected readonly Type[] _constantTypes = new []{ typeof(bool) };
+        protected readonly Type[] _constantTypes = new[] { typeof(bool) };
 
         protected readonly ISqlDialect _sqlDialect;
 
@@ -25,7 +25,7 @@ namespace QMap.SqlBuilder.Visitors
 
         public static IVisitor CreateFromExpression(Expression node, ref StringBuilder stringBuilder, ISqlDialect sqlDialect = null)
         {
-            
+
             switch (node.NodeType)
             {
                 case ExpressionType.Constant:

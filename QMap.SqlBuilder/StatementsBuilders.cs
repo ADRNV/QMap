@@ -1,7 +1,9 @@
 ﻿using QMap.SqlBuilder.Abstractions;
+using QMap.Core;
 using QMap.SqlBuilder.Visitors;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using QMap.Core.Dialects;
 
 namespace QMap.SqlBuilder
 {
@@ -10,6 +12,12 @@ namespace QMap.SqlBuilder
         private string _sql = "";
 
         private bool _canBeTerminalStatement;
+        public ISqlDialect SqlDialect { get; }
+
+        public StatementsBuilders(ISqlDialect sqlDialect)
+        {
+            SqlDialect = sqlDialect != null ? sqlDialect : new SqlDialectBase();
+        }
 
         public bool CanBeTerminalStatement
         {
@@ -39,6 +47,10 @@ namespace QMap.SqlBuilder
     public class SelectBuilder : StatementsBuilders, ISelectBuilder
     {
         private string _sql = "";
+
+        public SelectBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
 
         public string Sql
         {
@@ -81,6 +93,10 @@ namespace QMap.SqlBuilder
 
         private string _sql = "";
 
+        public FromBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
+
         public string Sql
         {
             get => _sql;
@@ -117,6 +133,10 @@ namespace QMap.SqlBuilder
     {
         private string _sql = "";
 
+        public WhereBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
+
         public string Sql
         {
             get => _sql;
@@ -126,7 +146,7 @@ namespace QMap.SqlBuilder
 
         public IWhereBuilder BuildWhere<T>(IFromBuilder fromBuilder, LambdaExpression expression)
         {
-            var visitor = new LambdaVisitor(expression);
+            var visitor = new LambdaVisitor(expression, SqlDialect);
 
             visitor.Visit()
                 .First()

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.Core.Dialects;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace QMap.SqlBuilder.Visitors
@@ -9,7 +10,7 @@ namespace QMap.SqlBuilder.Visitors
 
         public ParameterExpression ParameterExpression { get; set; }
 
-        public ParameterVisitor(ParameterExpression parameterExpression, ref StringBuilder stringBuilder) : base(parameterExpression)
+        public ParameterVisitor(ParameterExpression parameterExpression, ref StringBuilder stringBuilder, ISqlDialect sqlDialect) : base(parameterExpression, sqlDialect)
         {
             ParameterExpression = parameterExpression;
 

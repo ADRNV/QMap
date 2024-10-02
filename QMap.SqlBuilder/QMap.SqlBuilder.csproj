@@ -10,4 +10,8 @@
     <Folder Include="SqlBuilder\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QMap.Core\QMap.Core.csproj" />
+  </ItemGroup>
+
 </Project>

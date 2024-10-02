@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.Core;
+using QMap.Core.Dialects;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace QMap.SqlBuilder.Visitors
@@ -7,7 +9,7 @@ namespace QMap.SqlBuilder.Visitors
     {
         private StringBuilder _sql;
 
-        public BinaryVisitor(BinaryExpression binaryExpression, ref StringBuilder stringBuilder) : base(binaryExpression)
+        public BinaryVisitor(BinaryExpression binaryExpression, ref StringBuilder stringBuilder, ISqlDialect sqlDialect) : base(binaryExpression, sqlDialect)
         {
             _sql = stringBuilder;
         }

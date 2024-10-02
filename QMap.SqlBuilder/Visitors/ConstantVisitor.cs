@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.Core.Dialects;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace QMap.SqlBuilder.Visitors
@@ -8,7 +9,7 @@ namespace QMap.SqlBuilder.Visitors
         public StringBuilder _sql;
         public ConstantExpression ConstantNode { get; }
 
-        public ConstantVisitor(ConstantExpression constantExpression, ref StringBuilder stringBuilder) : base(constantExpression)
+        public ConstantVisitor(ConstantExpression constantExpression, ref StringBuilder stringBuilder, ISqlDialect sqlDialect) : base(constantExpression, sqlDialect)
         {
             ConstantNode = constantExpression;
 
@@ -17,8 +18,15 @@ namespace QMap.SqlBuilder.Visitors
 
         public override IEnumerable<IVisitor> Visit()
         {
-            _sql.Append($" {ConstantNode.Value} ");
-
+            if (_constantTypes.Contains(ConstantNode.Type))
+            {
+                _sql.Append($" {_sqlDialect.Constants[ConstantNode.Value?.ToString()]} ");
+            }
+            else
+            {
+                _sql.Append($" {ConstantNode.Value} ");
+            }
+          
             return null;
         }
     }

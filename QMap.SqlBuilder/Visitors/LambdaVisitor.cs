@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.Core.Dialects;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace QMap.SqlBuilder.Visitors
@@ -7,7 +8,7 @@ namespace QMap.SqlBuilder.Visitors
     {
         public StringBuilder Sql = new StringBuilder();
 
-        public LambdaVisitor(LambdaExpression lambdaExpression) : base(lambdaExpression)
+        public LambdaVisitor(LambdaExpression lambdaExpression, ISqlDialect sqlDialect) : base(lambdaExpression, sqlDialect)
         {
 
         }
@@ -25,7 +26,7 @@ namespace QMap.SqlBuilder.Visitors
 
             return new IVisitor[] {
 
-                CreateFromExpression(_node.Body, ref Sql)
+                CreateFromExpression(_node.Body, ref Sql, _sqlDialect)
             };
         }
     }

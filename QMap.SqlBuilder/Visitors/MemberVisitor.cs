@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using QMap.Core.Dialects;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace QMap.SqlBuilder.Visitors
@@ -9,7 +10,7 @@ namespace QMap.SqlBuilder.Visitors
 
         private StringBuilder _sql { get; set; }
 
-        public MemberVisitor(MemberExpression node, ref StringBuilder stringBuilder) : base(node)
+        public MemberVisitor(MemberExpression node, ref StringBuilder stringBuilder, ISqlDialect sqlDialect) : base(node, sqlDialect)
         {
             _memberExpression = node;
 

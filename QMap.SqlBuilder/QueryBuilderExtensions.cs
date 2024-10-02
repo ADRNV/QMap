@@ -7,27 +7,27 @@ namespace QMap.SqlBuilder
     {
         public static IFromBuilder From(this ISelectBuilder queryBuilder, Type entity, params Type[] entities)
         {
-            return new FromBuilder()
+            return new FromBuilder(queryBuilder.SqlDialect)
                 .BuildFrom(queryBuilder, entity, entities);
         }
 
         public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression)
         {
-            return new WhereBuilder()
+            return new WhereBuilder(queryBuilder.SqlDialect)
                .BuildWhere<T>(queryBuilder, expression);
         }
 
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
         {
-            return new SelectBuilder()
+            return new SelectBuilder(queryBuilder.SqlDialect)
                  .BuidSelect(entity);
         }
 
-        public static ISelectBuilder Select(Expression entity)
-        {
-            return new SelectBuilder()
-                 .BuidSelect(entity);
-        }
+        //public static ISelectBuilder Select(Expression entity)
+        //{
+        //    return new SelectBuilder()
+        //         .BuidSelect(entity);
+        //}
 
         public static string Build(this IQueryBuilder queryBuilder)
         {

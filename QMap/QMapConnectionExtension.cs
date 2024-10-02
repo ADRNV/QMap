@@ -41,7 +41,7 @@ namespace QMap
             var queryMapper = new QueryMapperBase(mapper);
 
             var command = connection.CreateCommand();
-            var sql = new StatementsBuilders()
+            var sql = new StatementsBuilders(connection.Dialect)
                 .Select(typeof(T))
                 .From(typeof(T))
                 .Where<T>(predicate)

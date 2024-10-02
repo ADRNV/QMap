@@ -1,17 +1,20 @@
-﻿using QMap.SqlBuilder.Dialects;
+﻿using QMap.Core.Dialects;
 
 namespace QMap.SqlServer
 {
     public class TSqlDialect : ISqlDialect
     {
-        public string ParameterName { get => "@"; set => throw new NotImplementedException(); }
-        public string Quotes { get => "'"; set => throw new NotImplementedException(); }
+        public string ParameterName { get => "@"; }
+        public string Quotes { get => "'"; }
 
-        private Dictionary<string, string> _constants = new Dictionary<string, string>()
-        { 
-            { "true", "1" },
-            { "false", "0" },
-        };
-        public Dictionary<string, string> Constants => new Dictionary<string, string>();
+        public Dictionary<string, string> Constants
+        {
+            get => new Dictionary<string, string>()
+            {
+                { "True", "1" },
+                { "False", "0" },
+            };
+        }
+        
     }
 }

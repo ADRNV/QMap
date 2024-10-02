@@ -1,3 +1,5 @@
+using QMap.Core.Dialects;
+using QMap.SqlServer;
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
 using System.Linq.Expressions;
@@ -8,25 +10,32 @@ namespace QMap.SqlBuilder.Tests
     {
         private IList<IParser> _parsers;
 
-        public SqlBuilderTests(IList<IParser> parsers)
+        private IList<ISqlDialect> _dialects;
+
+        public SqlBuilderTests(IList<IParser> parsers, IList<ISqlDialect> dialects)
         {
             _parsers = parsers;
+
+            _dialects = dialects;
         }
 
         [Fact]
         public void BuildNonTerminalStatementThrowsInvalidOperationException()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
-
-            Assert.Throws<InvalidOperationException>(() =>
+            _dialects.ToList().ForEach((d) =>
             {
-                queryBuilder.Build();
-            });
+                StatementsBuilders queryBuilder = new StatementsBuilders(d);
+
+                Assert.Throws<InvalidOperationException>(() =>
+                {
+                    queryBuilder.Build();
+                });
+            });         
         }
 
         public void BuildWithTerminalSttementNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -37,7 +46,7 @@ namespace QMap.SqlBuilder.Tests
         [Fact]
         public void BuildWithoutWhereNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             var s = queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -48,7 +57,7 @@ namespace QMap.SqlBuilder.Tests
         [Fact]
         public void FullSqlBuildNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -60,7 +69,7 @@ namespace QMap.SqlBuilder.Tests
         [Fact]
         public void FullSqlBuildWithParamsNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -69,15 +78,19 @@ namespace QMap.SqlBuilder.Tests
                 .Build();
         }
 
+        
         [Fact]
         public void FullSqlBuildWitoutSyntaxErrosInAllParsers()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            //TODO
+            //1. Find parser for Postgres, MySQL, etc
+            //2. What with reduce and MS SQL bit ?!
+            StatementsBuilders queryBuilder = new(new TSqlDialect());
 
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 2)
+                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
                 .Build();
 
             _parsers.ToList().ForEach(p =>

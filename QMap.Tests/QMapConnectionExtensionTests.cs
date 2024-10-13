@@ -50,9 +50,9 @@ namespace QMap.Tests
 
                 factEntity = connection.Query<TypesTestEntity>("select * from TypesTestEntity");
 
-                connection.Close();
-
                 Assert.Equivalent(expectedEntity, factEntity);
+
+                connection.Close();
             });
         }
 
@@ -73,9 +73,9 @@ namespace QMap.Tests
 
                 factEntity = connection.Query<TypesTestEntity>("select * from TypesTestEntity where 1 = 0");
 
-                connection.Close();
-
                 Assert.Equivalent(expectedEntities, factEntity);
+
+                connection.Close();
             });
         }
 
@@ -120,7 +120,7 @@ namespace QMap.Tests
 
                 Assert.Throws<InvalidOperationException>(() =>
                 {
-                    connection.Query<WrongEntity>("select * from TypesTestEntity");
+                    connection.Query<WrongEntity>("select * from TypesTestEntity").ToArray();
                 });
 
                 connection.Close();
@@ -152,9 +152,9 @@ namespace QMap.Tests
                 //TSQL errors when parse True constant
                 factEntity = connection.Where<TypesTestEntity>((TypesTestEntity e) => e.Id == e.Id);
 
-                connection.Close();
+                Assert.Equivalent(expectedEntity, factEntity.ToArray());
 
-                Assert.Equivalent(expectedEntity, factEntity);
+                connection.Close();
             });
         }
     }

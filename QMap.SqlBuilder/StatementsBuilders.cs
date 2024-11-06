@@ -3,6 +3,7 @@ using QMap.SqlBuilder.Abstractions;
 using QMap.SqlBuilder.Visitors;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace QMap.SqlBuilder
 {
@@ -171,6 +172,90 @@ namespace QMap.SqlBuilder
         public string Build()
         {
             return Sql;
+        }
+    }
+
+    public class InsertBuilder : StatementsBuilders, IInsertBuilder
+    {
+        public InsertBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
+
+        public string Build()
+        {
+            return Sql;
+        }
+
+        public IInsertBuilder BuildInsert<T>(T entity)
+        {
+            var columns = BuildColumns<T>();
+            var values = BuildValues(entity, columns);
+
+            Sql = $"insert into {typeof(T).Name} " +
+                $"({columns.Aggregate((c1, c2) => $"{c1},{c2}")})"
+                + "values"
+                + $"({values.Aggregate((v1, v2) => $"{v1},{v2}")})";
+
+
+            return this;
+        }
+
+        public IInsertBuilder BuildInsertExcept<T>(T entity, Func<PropertyInfo, bool> exceptPropsFilter)
+        {
+            var columns = BuildColumns<T>(exceptPropsFilter);
+            var values = BuildValues(entity, columns);
+
+            Sql = $"insert into {typeof(T).Name} " +
+                $"({columns.Aggregate((c1, c2) => $"{c1},{c2}")})"
+                + "values"
+                + $"({values.Aggregate((v1, v2) => $"{v1},{v2}")})";
+
+            return this;
+        }
+
+        private IEnumerable<string> BuildColumns<T>(Func<PropertyInfo, bool>? exceptPropsFilter = null)
+        {
+            var properties = typeof(T)
+                  .GetProperties(BindingFlags.Public
+                     | BindingFlags.GetProperty
+                     | BindingFlags.SetProperty
+                     | BindingFlags.Instance)
+                  .AsEnumerable();
+           
+            if(exceptPropsFilter != null)
+            {
+                properties = properties.Where(p => exceptPropsFilter.Invoke(p));
+            }
+
+            return properties
+                 .Select(p => p.Name);
+        }
+
+        private IEnumerable<string> BuildValues<T>(T entity, IEnumerable<string> columns)
+        {
+            var properties = typeof(T)
+                  .GetProperties(BindingFlags.Public
+                     | BindingFlags.GetProperty
+                     | BindingFlags.SetProperty
+                     | BindingFlags.Instance)
+                  .AsEnumerable();
+            
+            #nullable disable
+            return properties
+                .Where(p => columns.Contains(p.Name))
+                .Select(p => {
+                
+                    var rawValue = p.GetValue(entity);
+                
+                    if(rawValue is string)
+                    {
+                        return $"{SqlDialect.Quotes}{rawValue}{SqlDialect.Quotes}";    
+                    }
+                    else
+                    {
+                        return rawValue.ToString();
+                    }
+                });
         }
     }
 }

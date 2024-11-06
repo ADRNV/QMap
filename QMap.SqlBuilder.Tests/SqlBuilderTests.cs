@@ -1,3 +1,4 @@
+using AutoFixture;
 using QMap.Core.Dialects;
 using QMap.SqlServer;
 using QMap.Tests.Share.DataBase;
@@ -91,6 +92,38 @@ namespace QMap.SqlBuilder.Tests
                 .From(typeof(TypesTestEntity))
                 .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
                 .Build();
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+
+                Assert.Null(errors);
+            });
+        }
+
+        [Fact]
+        public void BuildInserNoThrowsErrors()
+        {
+            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
+
+            var entity = new Fixture()
+                .Create<TypesTestEntity>();
+
+            var sql = queryBuilder
+                .BuildInsert(entity);
+        }
+
+        [Fact]
+        public void FullSqlInsertBuildWitoutSyntaxErrosInAllParsers()
+        {
+            StatementsBuilders queryBuilder = new(new TSqlDialect());
+
+            var entity = new Fixture()
+                 .Create<TypesTestEntity>();
+
+            var sql = queryBuilder
+               .BuildInsert(entity);
+
 
             _parsers.ToList().ForEach(p =>
             {

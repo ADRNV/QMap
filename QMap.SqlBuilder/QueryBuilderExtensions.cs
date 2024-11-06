@@ -33,5 +33,12 @@ namespace QMap.SqlBuilder
         {
             return queryBuilder.Build();
         }
+
+        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, T entity)
+        {
+            return new InsertBuilder(queryBuilder.SqlDialect)
+                .BuildInsert(entity)
+                .Build();
+        }
     }
 }

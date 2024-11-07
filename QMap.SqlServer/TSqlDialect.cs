@@ -29,7 +29,7 @@ namespace QMap.SqlServer
             {
                 return base.Map(obj);
             }
-            catch (InvalidOperationException ex)
+            catch(InvalidOperationException ex)
             {
                 return obj switch
                 {
@@ -37,7 +37,7 @@ namespace QMap.SqlServer
                     _ => throw new InvalidOperationException()
                 };
             }
-
+            
         }
 
     }

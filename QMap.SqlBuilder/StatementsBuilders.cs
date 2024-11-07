@@ -221,8 +221,8 @@ namespace QMap.SqlBuilder
                      | BindingFlags.SetProperty
                      | BindingFlags.Instance)
                   .AsEnumerable();
-
-            if (exceptPropsFilter != null)
+           
+            if(exceptPropsFilter != null)
             {
                 properties = properties.Where(p => exceptPropsFilter.Invoke(p));
             }
@@ -239,18 +239,17 @@ namespace QMap.SqlBuilder
                      | BindingFlags.SetProperty
                      | BindingFlags.Instance)
                   .AsEnumerable();
-
-#nullable disable
+            
+            #nullable disable
             return properties
                 .Where(p => columns.Contains(p.Name))
-                .Select(p =>
-                {
-
+                .Select(p => {
+                
                     var rawValue = p.GetValue(entity);
-
-                    if (SqlDialect.RequireMapping(rawValue))
+                
+                    if(SqlDialect.RequireMapping(rawValue))
                     {
-                        return $"{SqlDialect.Quotes}{SqlDialect.Map(rawValue)}{SqlDialect.Quotes}";
+                        return $"{SqlDialect.Quotes}{SqlDialect.Map(rawValue)}{SqlDialect.Quotes}";    
                     }
                     else
                     {

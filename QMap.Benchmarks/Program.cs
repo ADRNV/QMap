@@ -16,6 +16,7 @@ builder.Services.AddHostedService<BenchmarkService>(sp =>
     return new BenchmarkService(() =>
     {
         BenchmarkRunner.Run<QMapQueryBenchmark>();
+        BenchmarkRunner.Run<QMapQueryBenchmarkExplicitReading>();
 
     }, sp.GetRequiredService<IEnumerable<Action>>());
 });

@@ -25,8 +25,8 @@ namespace QMap.Core.Dialects
 
         public bool RequireMapping(object obj)
         {
-           var t = obj.GetType();
-           return _mappingTypes.Contains(t);
+            var t = obj.GetType();
+            return _mappingTypes.Contains(t);
         }
     }
 }

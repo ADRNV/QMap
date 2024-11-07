@@ -6,6 +6,8 @@
 
         public string Quotes { get; }
 
-        public Dictionary<string, string> Constants { get; }
+        string? Map(object? obj);
+
+        bool RequireMapping(object? obj);
     }
 }

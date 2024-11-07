@@ -18,9 +18,9 @@ namespace QMap.SqlBuilder.Visitors
 
         public override IEnumerable<IVisitor> Visit()
         {
-            if (_constantTypes.Contains(ConstantNode.Type))
+            if (_sqlDialect.RequireMapping(ConstantNode.Value))
             {
-                _sql.Append($" {_sqlDialect.Constants[ConstantNode.Value?.ToString()]} ");
+                _sql.Append($" {_sqlDialect.Map(ConstantNode.Value)}");
             }
             else
             {

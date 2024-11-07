@@ -17,12 +17,12 @@ namespace QMap.SqlBuilder.Visitors
         {
             _sql.Append("(");
 
-            var right = CreateFromExpression(_node.Left, ref _sql)
+            var right = CreateFromExpression(_node.Left, ref _sql, _sqlDialect)
                 .Visit();
 
             _sql.Append(MapOperators(_node.NodeType));
 
-            var left = CreateFromExpression(_node.Right, ref _sql)
+            var left = CreateFromExpression(_node.Right, ref _sql, _sqlDialect)
                .Visit();
 
             _sql.Append(")");

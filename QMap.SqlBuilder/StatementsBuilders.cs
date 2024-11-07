@@ -247,9 +247,9 @@ namespace QMap.SqlBuilder
                 
                     var rawValue = p.GetValue(entity);
                 
-                    if(rawValue is string)
+                    if(SqlDialect.RequireMapping(rawValue))
                     {
-                        return $"{SqlDialect.Quotes}{rawValue}{SqlDialect.Quotes}";    
+                        return $"{SqlDialect.Quotes}{SqlDialect.Map(rawValue)}{SqlDialect.Quotes}";    
                     }
                     else
                     {

@@ -1,7 +1,5 @@
 ﻿using QMap.Core;
-using QMap.Core.Command;
 using QMap.SqlBuilder.Abstractions;
-using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -42,7 +40,7 @@ namespace QMap.SqlBuilder
         {
             var builder = new InsertBuilder(queryBuilder.SqlDialect)
                 .BuildInsertExcept(entity, exceptProperty);
-           
+
             parameters = builder.Parameters;
 
             return builder.Build();

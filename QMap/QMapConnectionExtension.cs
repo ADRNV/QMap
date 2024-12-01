@@ -2,7 +2,6 @@
 using QMap.Core.Mapping;
 using QMap.Mapping;
 using QMap.SqlBuilder;
-using System;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Linq.Expressions;

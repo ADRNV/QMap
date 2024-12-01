@@ -206,7 +206,7 @@ namespace QMap.SqlBuilder
         {
             var columns = BuildColumns<T>(exceptPropsFilter);
             var values = BuildValues(entity, columns);
-            
+
             Sql = $"insert into {typeof(T).Name} " +
                 $"({columns.Aggregate((c1, c2) => $"{c1},{c2}")})"
                 + "values"
@@ -223,8 +223,8 @@ namespace QMap.SqlBuilder
                      | BindingFlags.SetProperty
                      | BindingFlags.Instance)
                   .AsEnumerable();
-           
-            if(exceptPropsFilter != null)
+
+            if (exceptPropsFilter != null)
             {
                 properties = properties.Where(p => !exceptPropsFilter.Invoke(p));
             }
@@ -241,15 +241,16 @@ namespace QMap.SqlBuilder
                      | BindingFlags.SetProperty
                      | BindingFlags.Instance)
                   .AsEnumerable();
-            
-            #nullable disable
+
+#nullable disable
             return properties
                 .Where(p => columns.Contains(p.Name))
-                .Select(p => {
+                .Select(p =>
+                {
 
                     Parameters.Add(SqlDialect.ParameterName + p.Name, p.GetValue(entity));
 
-                    return $"{SqlDialect.ParameterName}{p.Name}";    
+                    return $"{SqlDialect.ParameterName}{p.Name}";
                 });
         }
     }

@@ -208,7 +208,7 @@ namespace QMap.Tests
                         throw ex;
                     }
                 });
-               
+
                 connection.Close();
             });
         }

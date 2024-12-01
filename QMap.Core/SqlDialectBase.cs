@@ -29,8 +29,8 @@ namespace QMap.Core.Dialects
 
         public bool RequireMapping(object obj)
         {
-           var t = obj.GetType();
-           return _mappingTypes.Contains(t);
+            var t = obj.GetType();
+            return _mappingTypes.Contains(t);
         }
 
         public virtual IDbDataParameter BuildParameter(ref IDbCommand dbCommand, string name, object value, params object[] options)
@@ -39,14 +39,14 @@ namespace QMap.Core.Dialects
 
             parameter.ParameterName = name;
             parameter.Value = value;
-           
+
             return parameter;
         }
 
         public virtual IDbCommand BuildParameters(IDbCommand dbCommand, Dictionary<string, object> namedParameters)
         {
             IDbCommand parametrizedCommand = dbCommand;
-            
+
             foreach (var parameterName in namedParameters.Keys)
             {
                 var parameter = BuildParameter(ref dbCommand, parameterName, null);

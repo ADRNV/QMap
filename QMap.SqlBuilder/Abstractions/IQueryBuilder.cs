@@ -8,6 +8,8 @@ namespace QMap.SqlBuilder.Abstractions
 
         bool CanBeTerminalStatement { get; internal set; }
 
+        Dictionary<string, object> Parameters { get; }
+
         internal ISqlDialect SqlDialect { get; }
 
         string Build();

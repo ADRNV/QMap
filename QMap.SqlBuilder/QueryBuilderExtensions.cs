@@ -1,5 +1,9 @@
-﻿using QMap.SqlBuilder.Abstractions;
+﻿using QMap.Core;
+using QMap.Core.Command;
+using QMap.SqlBuilder.Abstractions;
+using System.Data;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace QMap.SqlBuilder
 {
@@ -34,11 +38,24 @@ namespace QMap.SqlBuilder
             return queryBuilder.Build();
         }
 
-        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, T entity)
+        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Func<PropertyInfo, bool> exceptProperty)
         {
-            return new InsertBuilder(queryBuilder.SqlDialect)
-                .BuildInsert(entity)
-                .Build();
+            var builder = new InsertBuilder(queryBuilder.SqlDialect)
+                .BuildInsertExcept(entity, exceptProperty);
+           
+            parameters = builder.Parameters;
+
+            return builder.Build();
+        }
+
+        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity)
+        {
+            var builder = new InsertBuilder(queryBuilder.SqlDialect)
+                .BuildInsert(entity);
+
+            parameters = builder.Parameters;
+
+            return builder.Build();
         }
     }
 }

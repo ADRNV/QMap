@@ -14,6 +14,8 @@ namespace QMap.SqlBuilder
         private bool _canBeTerminalStatement;
         public ISqlDialect SqlDialect { get; }
 
+        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+
         public StatementsBuilders(ISqlDialect sqlDialect)
         {
             SqlDialect = sqlDialect != null ? sqlDialect : new SqlDialectBase();
@@ -204,7 +206,7 @@ namespace QMap.SqlBuilder
         {
             var columns = BuildColumns<T>(exceptPropsFilter);
             var values = BuildValues(entity, columns);
-
+            
             Sql = $"insert into {typeof(T).Name} " +
                 $"({columns.Aggregate((c1, c2) => $"{c1},{c2}")})"
                 + "values"
@@ -224,7 +226,7 @@ namespace QMap.SqlBuilder
            
             if(exceptPropsFilter != null)
             {
-                properties = properties.Where(p => exceptPropsFilter.Invoke(p));
+                properties = properties.Where(p => !exceptPropsFilter.Invoke(p));
             }
 
             return properties
@@ -244,17 +246,10 @@ namespace QMap.SqlBuilder
             return properties
                 .Where(p => columns.Contains(p.Name))
                 .Select(p => {
-                
-                    var rawValue = p.GetValue(entity);
-                
-                    if(SqlDialect.RequireMapping(rawValue))
-                    {
-                        return $"{SqlDialect.Quotes}{SqlDialect.Map(rawValue)}{SqlDialect.Quotes}";    
-                    }
-                    else
-                    {
-                        return rawValue.ToString();
-                    }
+
+                    Parameters.Add(SqlDialect.ParameterName + p.Name, p.GetValue(entity));
+
+                    return $"{SqlDialect.ParameterName}{p.Name}";    
                 });
         }
     }

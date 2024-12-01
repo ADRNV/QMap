@@ -1,6 +1,7 @@
 using AutoFixture;
 using QMap.Tests.Share;
 using QMap.Tests.Share.DataBase;
+using System.Data.Common;
 using System.Data.SqlClient;
 
 namespace QMap.Tests
@@ -154,6 +155,60 @@ namespace QMap.Tests
 
                 Assert.Equivalent(expectedEntity, factEntity.ToArray());
 
+                connection.Close();
+            });
+        }
+
+        [Fact]
+        public void InsertWithoutPropertyExecutesWithoutErrors()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .Create();
+
+                _testContext.SaveChanges();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                connection.Insert(entity, p => p.Name == "Id");
+
+                connection.Close();
+            });
+        }
+
+        [Fact]
+        public void InsertWithIdentityThrowsException()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .Create();
+
+                _testContext.SaveChanges();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                Assert.ThrowsAny<DbException>(() =>
+                {
+                    try
+                    {
+                        connection.Insert(entity);
+                    }
+                    catch (SqlException ex)
+                    {
+                        throw ex;
+                    }
+                });
+               
                 connection.Close();
             });
         }

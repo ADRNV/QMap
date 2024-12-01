@@ -2,8 +2,11 @@
 using QMap.Core.Mapping;
 using QMap.Mapping;
 using QMap.SqlBuilder;
+using System;
 using System.Collections.Concurrent;
+using System.Data;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace QMap
 {
@@ -49,6 +52,32 @@ namespace QMap
             command.CommandText = sql;
 
             return queryMapper.Map<T>(command.ExecuteReader());
+        }
+
+        public static void Insert<T>(this IQMapConnection connection, T entity, Func<PropertyInfo, bool> exceptProperty)
+        {
+            var command = connection.CreateCommand();
+            var sql = new StatementsBuilders(connection.Dialect)
+                .BuildInsert(connection, out var parameters, entity, exceptProperty);
+
+            command.CommandText = sql;
+
+            connection.Dialect.BuildParameters(command, parameters);
+
+            command.ExecuteNonQuery();
+        }
+
+        public static void Insert<T>(this IQMapConnection connection, T entity)
+        {
+            var command = connection.CreateCommand();
+            var sql = new StatementsBuilders(connection.Dialect)
+                .BuildInsert(connection, out var parameters, entity);
+
+            command.CommandText = sql;
+
+            connection.Dialect.BuildParameters(command, parameters);
+
+            command.ExecuteNonQuery();
         }
     }
 }

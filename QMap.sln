@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.SqlBuilder.Tests", "QM
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{C0627B39-40F3-4110-9EF5-0130B47AD2F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.Benchmarks", "QMap.Benchmarks\QMap.Benchmarks.csproj", "{FF000355-039D-42EB-A120-888762294DC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Benchmarks", "QMap.Benchmarks\QMap.Benchmarks.csproj", "{FF000355-039D-42EB-A120-888762294DC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.Tests.Share", "QMap.Tests.Share\QMap.Tests.Share.csproj", "{02B93221-DE00-4425-9A62-E0DFED3518EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QMap.Tests.Share", "QMap.Tests.Share\QMap.Tests.Share.csproj", "{02B93221-DE00-4425-9A62-E0DFED3518EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMap.Sqlite", "QMap.SqlLite\QMap.Sqlite.csproj", "{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,12 @@ Global
 		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02B93221-DE00-4425-9A62-E0DFED3518EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.DataBaseConfig|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.DataBaseConfig|Any CPU.Build.0 = Debug|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40F5394D-278C-47F9-BB3C-30A9DB0A79B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

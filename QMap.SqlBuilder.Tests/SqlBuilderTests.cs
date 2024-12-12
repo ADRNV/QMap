@@ -126,7 +126,7 @@ namespace QMap.SqlBuilder.Tests
 
             var entity = new Fixture()
                  .Create<TypesTestEntity>();
-
+            //Connections ?
             ////var sql = queryBuilder
             ////   .BuildInsert(entity);
 
@@ -137,6 +137,67 @@ namespace QMap.SqlBuilder.Tests
 
             //    Assert.Null(errors);
             //});
+        }
+
+        [Fact]
+        public void BuildDeleteNoThrowsErrors()
+        {
+            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
+  
+            var sql = queryBuilder
+                .Delete<TypesTestEntity>()
+                .From(typeof(TypesTestEntity))
+                .Build();
+        }
+
+        [Fact]
+        public void BuildDeleteThrowInvalidOperationException()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
+
+                var sql = queryBuilder
+                    .Delete<TypesTestEntity>()
+                    .Build();
+            });
+        }
+
+        [Fact]
+        public void DeleteSqlBuidWitoutSyntaxErrosInAllParsers()
+        {
+            StatementsBuilders queryBuilder = new(new TSqlDialect());
+
+            var sql = queryBuilder
+                .Delete<TypesTestEntity>()
+                .From(typeof(TypesTestEntity))
+                .Build();
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+
+                Assert.Null(errors);
+            });
+        }
+
+        [Fact]
+        public void DeleteFullSqlBuidWitoutSyntaxErrosInAllParsers()
+        {
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
+
+            var sql = queryBuilder
+                .Delete<TypesTestEntity>()
+                .From(typeof(TypesTestEntity))
+                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id < 0)
+                .Build();
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+
+                Assert.Null(errors);
+            });
         }
     }
 }

@@ -112,6 +112,13 @@ namespace QMap.SqlBuilder
             return this;
         }
 
+        public IFromBuilder BuildFrom(IDeleteBuilder quryBuilder, Type entity, params Type[] entities)
+        {
+            this.Sql += $"{quryBuilder.Sql}" + $" from {entity.Name} ";
+
+            return this;
+        }
+
         private string NameToAlias(string name, int skips = 3)
         {
             string alias = name;
@@ -168,7 +175,7 @@ namespace QMap.SqlBuilder
                 withlAliases = sql.Replace(type, aliases[type]);
             }
 
-            return withlAliases;
+            return string.IsNullOrEmpty(withlAliases) ? sql : withlAliases;
         }
 
         public string Build()
@@ -252,6 +259,37 @@ namespace QMap.SqlBuilder
 
                     return $"{SqlDialect.ParameterName}{p.Name}";
                 });
+        }
+    }
+
+    public class DeleteBuilder : StatementsBuilders, IDeleteBuilder
+    {
+        public DeleteBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
+
+        public Dictionary<string, object> Parameters => throw new NotImplementedException();
+
+        private Type _entity = null;
+
+        public string Build()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public IDeleteBuilder BuildDelete<T>()
+        {
+            this.Sql = "delete";
+
+            _entity = typeof(T);
+
+            return this;
+        }
+
+        public IFromBuilder BuildFrom()
+        {
+            return new FromBuilder(this.SqlDialect)
+                .BuildFrom(this, _entity, null);
         }
     }
 }

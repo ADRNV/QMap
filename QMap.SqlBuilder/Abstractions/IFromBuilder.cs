@@ -7,5 +7,8 @@ namespace QMap.SqlBuilder.Abstractions
         ConcurrentDictionary<string, string> Aliases { get; }
 
         public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities);
+
+        public IFromBuilder BuildFrom(IDeleteBuilder quryBuilder, Type entity, params Type[] entities);
+
     }
 }

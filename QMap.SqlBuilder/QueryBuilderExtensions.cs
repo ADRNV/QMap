@@ -13,6 +13,12 @@ namespace QMap.SqlBuilder
                 .BuildFrom(queryBuilder, entity, entities);
         }
 
+        public static IFromBuilder From(this IDeleteBuilder queryBuilder, Type entity)
+        {
+            return new FromBuilder(queryBuilder.SqlDialect)
+                .BuildFrom(queryBuilder, entity, null!);
+        }
+
         public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression)
         {
             return new WhereBuilder(queryBuilder.SqlDialect)
@@ -54,6 +60,12 @@ namespace QMap.SqlBuilder
             parameters = builder.Parameters;
 
             return builder.Build();
+        }
+
+        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder)
+        {
+            return new DeleteBuilder(queryBuilder.SqlDialect)
+                .BuildDelete<T>();
         }
     }
 }

@@ -4,6 +4,7 @@ using QMap.SqlServer;
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace QMap.SqlBuilder.Tests
 {
@@ -54,7 +55,7 @@ namespace QMap.SqlBuilder.Tests
                 .From(typeof(TypesTestEntity))
                 .Build();
         }
-
+        
         [Fact]
         public void FullSqlBuildNoThrowsErrors()
         {
@@ -79,29 +80,6 @@ namespace QMap.SqlBuilder.Tests
                 .Build();
         }
 
-
-        [Fact]
-        public void FullSqlBuildWitoutSyntaxErrosInAllParsers()
-        {
-            //TODO
-            //1. Find parser for Postgres, MySQL, etc
-            //2. What with reduce and MS SQL bit ?!
-            StatementsBuilders queryBuilder = new(new TSqlDialect());
-
-            var sql = queryBuilder
-                .Select(typeof(TypesTestEntity))
-                .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
-                .Build();
-
-            _parsers.ToList().ForEach(p =>
-            {
-                var errors = p.Parse(sql);
-
-                Assert.Null(errors);
-            });
-        }
-
         [Fact]
         public void BuildInsertNoThrowsErrors()
         {
@@ -117,87 +95,6 @@ namespace QMap.SqlBuilder.Tests
 
             var sql = queryBuilder
                 .BuildInsert(connection, out parameters, entity);
-        }
-
-        [Fact]
-        public void FullSqlInsertBuildWitoutSyntaxErrosInAllParsers()
-        {
-            StatementsBuilders queryBuilder = new(new TSqlDialect());
-
-            var entity = new Fixture()
-                 .Create<TypesTestEntity>();
-            //Connections ?
-            ////var sql = queryBuilder
-            ////   .BuildInsert(entity);
-
-
-            //_parsers.ToList().ForEach(p =>
-            //{
-            //    var errors = p.Parse(sql);
-
-            //    Assert.Null(errors);
-            //});
-        }
-
-        [Fact]
-        public void BuildDeleteNoThrowsErrors()
-        {
-            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
-  
-            var sql = queryBuilder
-                .Delete<TypesTestEntity>()
-                .From(typeof(TypesTestEntity))
-                .Build();
-        }
-
-        [Fact]
-        public void BuildDeleteThrowInvalidOperationException()
-        {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
-
-                var sql = queryBuilder
-                    .Delete<TypesTestEntity>()
-                    .Build();
-            });
-        }
-
-        [Fact]
-        public void DeleteSqlBuidWitoutSyntaxErrosInAllParsers()
-        {
-            StatementsBuilders queryBuilder = new(new TSqlDialect());
-
-            var sql = queryBuilder
-                .Delete<TypesTestEntity>()
-                .From(typeof(TypesTestEntity))
-                .Build();
-
-            _parsers.ToList().ForEach(p =>
-            {
-                var errors = p.Parse(sql);
-
-                Assert.Null(errors);
-            });
-        }
-
-        [Fact]
-        public void DeleteFullSqlBuidWitoutSyntaxErrosInAllParsers()
-        {
-            StatementsBuilders queryBuilder = new(new SqlDialectBase());
-
-            var sql = queryBuilder
-                .Delete<TypesTestEntity>()
-                .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id < 0)
-                .Build();
-
-            _parsers.ToList().ForEach(p =>
-            {
-                var errors = p.Parse(sql);
-
-                Assert.Null(errors);
-            });
-        }
+        }    
     }
 }

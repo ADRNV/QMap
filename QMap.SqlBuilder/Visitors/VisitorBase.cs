@@ -42,6 +42,7 @@ namespace QMap.SqlBuilder.Visitors
                 case ExpressionType.LessThan:
                 case ExpressionType.LessThanOrEqual:
                 case ExpressionType.AndAlso:
+                case ExpressionType.NotEqual:
                     return new BinaryVisitor((BinaryExpression)node, ref stringBuilder, sqlDialect);
                 case ExpressionType.MemberAccess:
                     return new MemberVisitor((MemberExpression)node, ref stringBuilder, sqlDialect);

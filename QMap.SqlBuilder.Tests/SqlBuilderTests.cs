@@ -22,6 +22,7 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
+        [Trait("SQL", "Full")]
         public void BuildNonTerminalStatementThrowsInvalidOperationException()
         {
             _dialects.ToList().ForEach((d) =>
@@ -35,6 +36,7 @@ namespace QMap.SqlBuilder.Tests
             });
         }
 
+        [Trait("SQL", "Full")]
         public void BuildWithTerminalSttementNoThrowsErrors()
         {
             StatementsBuilders queryBuilder = new(new SqlDialectBase());
@@ -46,6 +48,7 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
+        [Trait("SQL", "Where")]
         public void BuildWithoutWhereNoThrowsErrors()
         {
             StatementsBuilders queryBuilder = new(new SqlDialectBase());
@@ -57,6 +60,7 @@ namespace QMap.SqlBuilder.Tests
         }
         
         [Fact]
+        [Trait("SQL", "Full")]
         public void FullSqlBuildNoThrowsErrors()
         {
             StatementsBuilders queryBuilder = new(new SqlDialectBase());
@@ -69,6 +73,7 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
+        [Trait("SQL", "Full")]
         public void FullSqlBuildWithParamsNoThrowsErrors()
         {
             StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
@@ -81,6 +86,7 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
+        [Trait("SQL", "Full")]
         public void BuildInsertNoThrowsErrors()
         {
             StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
@@ -95,6 +101,28 @@ namespace QMap.SqlBuilder.Tests
 
             var sql = queryBuilder
                 .BuildInsert(connection, out parameters, entity);
-        }    
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(42.0f)]
+        [InlineData(42.0d)]
+        [InlineData("1")]
+        [InlineData(false)]
+        [Trait("SQL", "Full")]
+        public void WhereMapExpressionWithInternalValueRights(object value)
+        {
+            _parsers.ToList().ForEach(c =>
+            {
+                StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
+
+                var internalValue = value;
+
+                queryBuilder
+                .Select(typeof(TypesTestEntity))
+                .From(typeof(TypesTestEntity))
+                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id.ToString() == internalValue);
+            });
+        }
     }
 }

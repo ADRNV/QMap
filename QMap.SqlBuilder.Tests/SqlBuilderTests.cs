@@ -116,12 +116,12 @@ namespace QMap.SqlBuilder.Tests
             {
                 StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
-                var internalValue = value;
+                var external = value;
 
                 queryBuilder
-                .Select(typeof(TypesTestEntity))
-                .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id.ToString() == internalValue);
+                    .Select(typeof(TypesTestEntity))
+                    .From(typeof(TypesTestEntity))
+                    .Where<TypesTestEntity>((TypesTestEntity t) => t.StringField == external);
             });
         }
     }

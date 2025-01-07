@@ -148,10 +148,9 @@ namespace QMap.Tests
                 IEnumerable<TypesTestEntity> factEntity;
 
                 using var connection = c.Create();
-
                 connection.Open();
                 //TSQL errors when parse True constant
-                factEntity = connection.Where<TypesTestEntity>((TypesTestEntity e) => e.Id == e.Id);
+                factEntity = connection.Where<TypesTestEntity>((TypesTestEntity e) => e.Id != 0);
 
                 Assert.Equivalent(expectedEntity, factEntity.ToArray());
 
@@ -208,6 +207,66 @@ namespace QMap.Tests
                         throw ex;
                     }
                 });
+
+                connection.Close();
+            });
+        }
+
+        [Fact]
+        public void DeleteNoThorwsErrors()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var name = Guid.NewGuid().ToString();
+
+                var entity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .With(t => t.StringField, name)
+               .Create();
+
+                _testContext.SaveChanges();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                connection.Delete<TypesTestEntity>((TypesTestEntity e) => e.StringField == name);
+
+                var allEntitiesDeleted = _testContext.TypesTestEntity.Count() == 0;
+
+                Assert.True(allEntitiesDeleted);
+
+                connection.Close();
+            });
+        }
+
+        [Fact]
+        public void DeleteNotRevemoveNotMatchedEntityes()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var name = Guid.NewGuid().ToString();
+
+                var entity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .With(t => t.StringField, name)
+               .Create();
+
+                _testContext.SaveChanges();
+
+                var initialCount = _testContext.TypesTestEntity.Count();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                connection.Delete<TypesTestEntity>((TypesTestEntity e) => e.StringField != name);
+
+                var allEntitiesDeleted = initialCount == _testContext.TypesTestEntity.Count();
+
+                Assert.True(allEntitiesDeleted);
 
                 connection.Close();
             });

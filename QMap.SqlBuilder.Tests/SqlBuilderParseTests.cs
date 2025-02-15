@@ -1,8 +1,11 @@
 ﻿using AutoFixture;
 using QMap.Core.Dialects;
 using QMap.SqlServer;
+using QMap.Tests.Share.Common.Fakes.Connections;
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace QMap.SqlBuilder.Tests
 {
@@ -45,23 +48,100 @@ namespace QMap.SqlBuilder.Tests
 
         [Trait("SQL", "Insert")]
         [Fact]
-        public void FullSqlInsertBuildWitoutSyntaxErrosInAllParsers()
+        public void FullSqlInsertWithAllPropertiesBuildWitoutSyntaxErrosInAllParsers()
         {
-            StatementsBuilders queryBuilder = new(new TSqlDialect());
+            var connectionFake = FakeConnectionExtensions.Create();
+
+            StatementsBuilders queryBuilder = new StatementsBuilders(connectionFake.Dialect);
 
             var entity = new Fixture()
+                 .Build<TypesTestEntity>()
+                 .Without(e => e.Id)
                  .Create<TypesTestEntity>();
-            //Connections ?
-            ////var sql = queryBuilder
-            ////   .BuildInsert(entity);
 
+            var sql = queryBuilder
+                .BuildInsert(connectionFake, out var _, entity);
 
-            //_parsers.ToList().ForEach(p =>
-            //{
-            //    var errors = p.Parse(sql);
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
 
-            //    Assert.Null(errors);
-            //});
+                Assert.Null(errors);
+            });
+        }
+
+        [Trait("SQL", "Insert")]
+        [Fact]
+        public void FullSqlInsertBuildWitoutSyntaxErrosInAllParsers()
+        {
+            var connectionFake = FakeConnectionExtensions.Create();
+
+            StatementsBuilders queryBuilder = new StatementsBuilders(connectionFake.Dialect);
+
+            var entity = new Fixture()
+                 .Build<TypesTestEntity>()
+                 .Without(e => e.Id)
+                 .Create<TypesTestEntity>();
+
+            var sql = queryBuilder
+                .BuildInsert(connectionFake, out var _, entity, (p) => p.Name == "Id");
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+
+                Assert.Null(errors);
+            });
+        }
+
+        [Trait("SQL", "Update")]
+        [Fact]
+        public void BuildUpdateNoThrowsErros()
+        {
+            var connectionFake = FakeConnectionExtensions.Create();
+
+            StatementsBuilders queryBuilder = new StatementsBuilders(connectionFake.Dialect);
+
+            var entity = new Fixture()
+                 .Build<TypesTestEntity>()
+                 .Without(e => e.Id)
+                 .Create<TypesTestEntity>();
+
+            entity.IntField = 2048;
+
+            var sql = queryBuilder
+                .Update(connectionFake, out var _, entity, () => entity.IntField)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0)
+                .Build();
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+
+                Assert.Null(errors);
+            });
+        }
+
+        [Trait("SQL", "Update")]
+        [Fact]
+        public void BuildUpdateThrowsInvalidOperationExceptionWhenGetNoProperty()
+        {
+            var connectionFake = FakeConnectionExtensions.Create();
+
+            StatementsBuilders queryBuilder = new StatementsBuilders(connectionFake.Dialect);
+
+            var entity = new Fixture()
+                 .Build<TypesTestEntity>()
+                 .Without(e => e.Id)
+                 .Create<TypesTestEntity>();
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+               var sql = queryBuilder
+                .Update(connectionFake, out var _, entity, () => entity.ToString())
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0)
+                .Build();
+            });
         }
 
         [Trait("SQL", "Delete")]

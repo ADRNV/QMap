@@ -25,17 +25,33 @@ namespace QMap.SqlBuilder
                .BuildWhere<T>(queryBuilder, expression);
         }
 
+        public static IQueryBuilder Where<T>(this IUpdateBuilder queryBuilder, LambdaExpression expression)
+        {
+            return new WhereBuilder(queryBuilder.SqlDialect)
+               .BuildWhere<T>(queryBuilder, expression);
+        }
+
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
         {
             return new SelectBuilder(queryBuilder.SqlDialect)
                  .BuidSelect(entity);
         }
 
-        //public static ISelectBuilder Select(Expression entity)
-        //{
-        //    return new SelectBuilder()
-        //         .BuidSelect(entity);
-        //}
+        public static IUpdateBuilder Update<T, V>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Expression<Func<V>> propertySelectors)
+        {
+            var builder = new UpdateBuilder(queryBuilder.SqlDialect)
+                .BuildUpdate(entity, propertySelectors);
+
+            parameters = builder.Parameters;
+
+            return builder;
+        }
+
+        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder)
+        {
+            return new DeleteBuilder(queryBuilder.SqlDialect)
+                .BuildDelete<T>();
+        }
 
         public static string Build(this IQueryBuilder queryBuilder)
         {
@@ -60,12 +76,6 @@ namespace QMap.SqlBuilder
             parameters = builder.Parameters;
 
             return builder.Build();
-        }
-
-        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder)
-        {
-            return new DeleteBuilder(queryBuilder.SqlDialect)
-                .BuildDelete<T>();
         }
     }
 }

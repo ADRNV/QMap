@@ -166,6 +166,19 @@ namespace QMap.SqlBuilder
             return this;
         }
 
+        public IWhereBuilder BuildWhere<T>(IUpdateBuilder fromBuilder, LambdaExpression expression)
+        {
+            var visitor = new LambdaVisitor(expression, SqlDialect);
+
+            visitor.Visit()
+                .First()
+                .Visit();
+
+            this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
+
+            return this;
+        }
+
         private string PushAliases(string sql, ConcurrentDictionary<string, string> aliases)
         {
             var withlAliases = "";
@@ -259,6 +272,35 @@ namespace QMap.SqlBuilder
 
                     return $"{SqlDialect.ParameterName}{p.Name}";
                 });
+        }
+    }
+
+    public class UpdateBuilder : StatementsBuilders, IUpdateBuilder
+    {
+        public UpdateBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
+        {
+        }
+
+        public IUpdateBuilder BuildUpdate<T, V>(T entity, Expression<Func<V>> propertySelector)
+        {
+            var memberExpression = propertySelector.Body as MemberExpression;
+
+            if (memberExpression is null) throw new InvalidOperationException("Delegate must return property of object");
+
+            var typeInfo = memberExpression.Member.DeclaringType;
+
+            var property = (PropertyInfo)memberExpression.Member;
+
+            var value = property.GetValue(entity);
+
+            Sql = $"update {typeInfo.Name} set ";
+
+            var parameterKey = SqlDialect.ParameterName + property.Name;
+            Parameters.Add(parameterKey, property.GetValue(entity));
+            //update TypesTestEntity set @IntField = 2048
+            //Sql += string.Join(',',Parameters.Select(p => $"{p.Key} = {p.Value}"));
+            Sql += $"{property.Name} = {parameterKey}";
+            return this;       
         }
     }
 

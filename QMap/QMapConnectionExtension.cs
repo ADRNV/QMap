@@ -79,6 +79,19 @@ namespace QMap
             command.ExecuteNonQuery();
         }
 
+        public static void Update<T, V>(this IQMapConnection connection, T entity, Expression<Func<V>> propertySelector) where T : class, new()
+        {
+            var command = connection.CreateCommand();
+
+            var sql = new StatementsBuilders(connection.Dialect)
+                .Update(connection, out var parameters, entity, propertySelector)
+                .Build();
+            
+            command.CommandText = sql;
+
+            command.ExecuteNonQuery();
+        }
+
         public static void Delete<T>(this IQMapConnection connection, LambdaExpression predicate, IEntityMapper? customMapper = null) where T : class, new()
         {
             var command = connection.CreateCommand();

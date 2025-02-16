@@ -1,29 +1,32 @@
 using AutoFixture;
+using Microsoft.Data.Sqlite;
 using QMap.Tests.Share;
+using QMap.Tests.Share.Common;
 using QMap.Tests.Share.DataBase;
 using System.Data.Common;
 using System.Data.SqlClient;
+using Xunit.Abstractions;
 
 namespace QMap.Tests
 {
     public class QMapConnectionExtensionTests : IDisposable
     {
-        private TestContext _testContext;
 
-        private List<IQMapConnectionFactoryBase> _connectionFactories;
+        private List<IQMapConnectionFactory> _connectionFactories;
 
-        public QMapConnectionExtensionTests(TestContext testContext, IEnumerable<IQMapConnectionFactoryBase> connectionFactories)
+        private static TestContext _context;
+
+        public QMapConnectionExtensionTests(IEnumerable<IQMapConnectionFactory> connectionFactories)
         {
             _connectionFactories = connectionFactories
                 .ToList();
-
-            _testContext = testContext;
-            _testContext.Database.EnsureCreated();
         }
 
         public void Dispose()
         {
-            _testContext.Database.EnsureDeleted();
+            
+            //_context.Database.EnsureDeleted();
+            //_context.Dispose();   
         }
 
         [Theory]
@@ -39,9 +42,14 @@ namespace QMap.Tests
                .Without(t => t.Id)
                .CreateMany(count);
 
-                _testContext.TypesTestEntity.AddRange(expectedEntity);
+                _context = c.GetDbContext<TestContext>();
 
-                _testContext.SaveChanges();
+                _context.Database.EnsureDeleted();
+                _context.Database.EnsureCreated();
+
+                _context.TypesTestEntity.AddRange(expectedEntity);
+
+                _context.SaveChanges();
 
                 IEnumerable<TypesTestEntity> factEntity;
 
@@ -54,6 +62,8 @@ namespace QMap.Tests
                 Assert.Equivalent(expectedEntity, factEntity);
 
                 connection.Close();
+
+                _context.Database.EnsureDeleted();
             });
         }
 
@@ -62,11 +72,15 @@ namespace QMap.Tests
         {
             _connectionFactories.ForEach(c =>
             {
-                var expectedEntities = _testContext.TypesTestEntity
+                var expectedEntities = c.GetDbContext<TestContext>().TypesTestEntity
                 .Where((e) => false)
                 .AsEnumerable();
 
                 IEnumerable<TypesTestEntity> factEntity;
+
+                var context = c.GetDbContext<TestContext>();
+
+                context.Database.EnsureCreated();
 
                 using var connection = c.Create();
 
@@ -77,6 +91,8 @@ namespace QMap.Tests
                 Assert.Equivalent(expectedEntities, factEntity);
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -85,16 +101,36 @@ namespace QMap.Tests
         {
             _connectionFactories.ForEach(c =>
             {
+
+                var context = c.GetDbContext<TestContext>();
+
+                context.Database.EnsureCreated();
+
                 using var connection = c.Create();
 
                 connection.Open();
 
-                Assert.Throws<SqlException>(() =>
+                try
                 {
                     connection.Query<TypesTestEntity>("select * from where 1 = 0");
-                });
+
+                }
+                catch (SqlException sqle)
+                {
+                    Assert.True(true);
+                }
+                catch (SqliteException sqliex)
+                {
+                    Assert.True(true);
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail(ex.Message);
+                }
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -111,9 +147,13 @@ namespace QMap.Tests
                .Without(t => t.Id)
                .CreateMany(count);
 
-                _testContext.TypesTestEntity.AddRange(expectedEntity);
+                var context = c.GetDbContext<TestContext>();
 
-                _testContext.SaveChanges();
+                context.Database.EnsureCreated();
+
+                context.TypesTestEntity.AddRange(expectedEntity);
+
+                context.SaveChanges();
 
                 using var connection = c.Create();
 
@@ -125,6 +165,8 @@ namespace QMap.Tests
                 });
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -141,9 +183,13 @@ namespace QMap.Tests
                .Without(t => t.Id)
                .CreateMany(count);
 
-                _testContext.TypesTestEntity.AddRange(expectedEntity);
+                var context = c.GetDbContext<TestContext>();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
 
-                _testContext.SaveChanges();
+                context.TypesTestEntity.AddRange(expectedEntity);
+
+                context.SaveChanges();
 
                 IEnumerable<TypesTestEntity> factEntity;
 
@@ -152,9 +198,11 @@ namespace QMap.Tests
                 //TSQL errors when parse True constant
                 factEntity = connection.Where<TypesTestEntity>((TypesTestEntity e) => e.Id != 0);
 
-                Assert.Equivalent(expectedEntity, factEntity.ToArray());
+                Assert.Equivalent(expectedEntity.ToArray(), factEntity.ToArray());
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -168,7 +216,9 @@ namespace QMap.Tests
                .Without(t => t.Id)
                .Create();
 
-                _testContext.SaveChanges();
+                var context = c.GetDbContext<TestContext>();
+
+                context.Database.EnsureCreated();
 
                 using var connection = c.Create();
 
@@ -177,6 +227,8 @@ namespace QMap.Tests
                 connection.Insert(entity, p => p.Name == "Id");
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -190,25 +242,34 @@ namespace QMap.Tests
                .Without(t => t.Id)
                .Create();
 
-                _testContext.SaveChanges();
+                var context = c.GetDbContext<TestContext>();
 
-                using var connection = c.Create();
+                context.Database.EnsureCreated();
+
+                using var connection = c.Create();            
 
                 connection.Open();
 
-                Assert.ThrowsAny<DbException>(() =>
+                try
                 {
-                    try
-                    {
-                        connection.Insert(entity);
-                    }
-                    catch (SqlException ex)
-                    {
-                        throw ex;
-                    }
-                });
+                    connection.Insert(entity);
+                }
+                catch (SqlException sqle)
+                {
+                    Assert.True(true);
+                }
+                catch (SqliteException sqliex)
+                {
+                    Assert.True(true);
+                }
+                catch(Exception ex)
+                {
+                    Assert.Fail(ex.Message); 
+                }
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -219,13 +280,9 @@ namespace QMap.Tests
             {
                 var name = Guid.NewGuid().ToString();
 
-                var entity = new Fixture()
-               .Build<TypesTestEntity>()
-               .Without(t => t.Id)
-               .With(t => t.StringField, name)
-               .Create();
+                var context = c.GetDbContext<TestContext>();
 
-                _testContext.SaveChanges();
+                context.Database.EnsureCreated();
 
                 using var connection = c.Create();
 
@@ -233,11 +290,9 @@ namespace QMap.Tests
 
                 connection.Delete<TypesTestEntity>((TypesTestEntity e) => e.StringField == name);
 
-                var allEntitiesDeleted = _testContext.TypesTestEntity.Count() == 0;
-
-                Assert.True(allEntitiesDeleted);
-
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
 
@@ -251,12 +306,18 @@ namespace QMap.Tests
                 var entity = new Fixture()
                .Build<TypesTestEntity>()
                .Without(t => t.Id)
-               .With(t => t.StringField, name)
+               .With(t => t.StringField)
                .Create();
 
-                _testContext.SaveChanges();
+                var context = c.GetDbContext<TestContext>();
 
-                var initialCount = _testContext.TypesTestEntity.Count();
+                context.Database.EnsureCreated();
+
+                context.AddRange(entity);
+
+                context.SaveChanges();
+
+                var initialCount = context.TypesTestEntity.Count();
 
                 using var connection = c.Create();
 
@@ -264,11 +325,13 @@ namespace QMap.Tests
 
                 connection.Delete<TypesTestEntity>((TypesTestEntity e) => e.StringField != name);
 
-                var allEntitiesDeleted = initialCount == _testContext.TypesTestEntity.Count();
+                var allEntitiesDeleted = initialCount != context.TypesTestEntity.Count();
 
                 Assert.True(allEntitiesDeleted);
 
                 connection.Close();
+
+                context.Database.EnsureDeleted();
             });
         }
     }

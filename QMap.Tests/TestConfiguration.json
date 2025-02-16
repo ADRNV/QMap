@@ -1,5 +1,6 @@
 {
   "ConnectionStrings": {
-    "TestDbConnectionSqlServer": "Server=localhost;Database=TestDb;Integrated Security=true;TrustServerCertificate=Yes;Encrypt=false"
+    "TestDbConnectionSqlServer": "Server=localhost;Database=TestDb;Integrated Security=true;TrustServerCertificate=Yes;Encrypt=false",
+    "TestDbConnectionSqlite": "Data Source=.\\TestDb.sqlite;"
   }
 }

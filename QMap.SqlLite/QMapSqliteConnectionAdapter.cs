@@ -6,7 +6,7 @@ namespace QMap.Sqlite
 {
     public class QMapSqliteConnectionAdapter : QMapConnectionAdapterBase<SqliteConnection>
     {
-        public override ISqlDialect Dialect => null;
+        public override ISqlDialect Dialect => new SqliteDialect();
 
         public QMapSqliteConnectionAdapter(SqliteConnection connection) : base(connection)
         {

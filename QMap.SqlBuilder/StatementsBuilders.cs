@@ -173,7 +173,7 @@ namespace QMap.SqlBuilder
             visitor.Visit()
                 .First()
                 .Visit();
-
+         
             this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
 
             return this;
@@ -281,7 +281,7 @@ namespace QMap.SqlBuilder
         {
         }
 
-        public IUpdateBuilder BuildUpdate<T, V>(T entity, Expression<Func<V>> propertySelector)
+        public IUpdateBuilder BuildUpdate<T, V>(Expression<Func<V>> propertySelector, V value)
         {
             var memberExpression = propertySelector.Body as MemberExpression;
 
@@ -291,14 +291,11 @@ namespace QMap.SqlBuilder
 
             var property = (PropertyInfo)memberExpression.Member;
 
-            var value = property.GetValue(entity);
-
             Sql = $"update {typeInfo.Name} set ";
 
             var parameterKey = SqlDialect.ParameterName + property.Name;
-            Parameters.Add(parameterKey, property.GetValue(entity));
-            //update TypesTestEntity set @IntField = 2048
-            //Sql += string.Join(',',Parameters.Select(p => $"{p.Key} = {p.Value}"));
+            Parameters.Add(parameterKey, value);
+
             Sql += $"{property.Name} = {parameterKey}";
             return this;       
         }

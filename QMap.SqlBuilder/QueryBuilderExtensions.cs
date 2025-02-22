@@ -37,10 +37,10 @@ namespace QMap.SqlBuilder
                  .BuidSelect(entity);
         }
 
-        public static IUpdateBuilder Update<T, V>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Expression<Func<V>> propertySelectors)
+        public static IUpdateBuilder Update<T, V>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, Expression<Func<V>> propertySelectors, V value)
         {
             var builder = new UpdateBuilder(queryBuilder.SqlDialect)
-                .BuildUpdate(entity, propertySelectors);
+                .BuildUpdate<T, V>(propertySelectors, value);
 
             parameters = builder.Parameters;
 

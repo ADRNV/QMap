@@ -6,6 +6,7 @@ using QMap.Tests.Share.DataBase;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Xunit.Abstractions;
+using static Dapper.SqlMapper;
 
 namespace QMap.Tests
 {
@@ -266,6 +267,83 @@ namespace QMap.Tests
                 {
                     Assert.Fail(ex.Message); 
                 }
+
+                connection.Close();
+
+                context.Database.EnsureDeleted();
+            });
+        }
+
+        [Fact]
+        public void UpdateNoThrowsErrors()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entity = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .Create();
+
+                var context = c.GetDbContext<TestContext>();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                context.TypesTestEntity.Add(entity);
+
+                context.SaveChanges();
+
+                using var connection = c.Create();
+                
+                connection.Open();
+                var newValue = new Random().Next();
+                entity.IntField = newValue;
+                //TSQL errors when parse True constant
+                connection.Update<TypesTestEntity, int>(() => entity.IntField, newValue, (TypesTestEntity e) => e.Id == entity.Id);
+
+                Assert.True(context.TypesTestEntity.Find(new object[] {entity.Id}).IntField == newValue);
+
+                connection.Close();
+
+                context.Database.EnsureDeleted();
+            });
+        }
+
+        [Fact]
+        public void UpdateUpdatesOnlyMathedEntities()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entities = new Fixture()
+               .Build<TypesTestEntity>()
+               .Without(t => t.Id)
+               .CreateMany(15);
+
+                var context = c.GetDbContext<TestContext>();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                context.TypesTestEntity.AddRange(entities);
+
+                var updateEntity = entities.First();
+                
+                context.SaveChanges();
+
+                var newValue = new Random().Next();
+
+                updateEntity.IntField = newValue;
+
+                var id = updateEntity.Id;
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                //TSQL errors when parse True constant
+                connection.Update<TypesTestEntity, int>(() => updateEntity.IntField, newValue,(TypesTestEntity e) => e.Id == updateEntity.Id);
+
+                Assert.True(context.TypesTestEntity.Find(new object[] { updateEntity.Id }).IntField == updateEntity.IntField);
+                Assert.True(context.TypesTestEntity.Where((e) => e.Id != updateEntity.Id).All(e => e.IntField != newValue));
+
 
                 connection.Close();
 

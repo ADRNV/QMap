@@ -6,6 +6,6 @@ namespace QMap.SqlBuilder.Abstractions
 {
     public interface IUpdateBuilder : IQueryBuilder
     {
-        IUpdateBuilder BuildUpdate<T, V>(T entity, Expression<Func<V>> propertySelector);
+        IUpdateBuilder BuildUpdate<T, V>(Expression<Func<V>> propertySelector, V value);
     }
 }

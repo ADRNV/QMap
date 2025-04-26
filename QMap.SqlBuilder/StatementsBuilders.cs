@@ -281,7 +281,6 @@ namespace QMap.SqlBuilder
         public IUpdateBuilder BuildUpdate<T, V>(Expression<Func<V>> propertySelector, V value)
         {
             var memberExpression = propertySelector.Body as MemberExpression;
-            var internalExpression = propertySelector.Body as ConstantExpression;
 
             if (memberExpression is null) throw new InvalidOperationException("Delegate must return property of object");
 

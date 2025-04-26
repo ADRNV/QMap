@@ -1,4 +1,5 @@
 ﻿using QMap.Core.Dialects;
+using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -87,23 +88,29 @@ namespace QMap.SqlBuilder.Visitors.Native
 
         protected override Expression VisitMember(MemberExpression memeberExpression)
         {
-            if (memeberExpression.Member.MemberType == MemberTypes.Field || (memeberExpression.Expression as ConstantExpression) != null)
+            //TODO NOW!:
+            //Write logic for get diffrence between Property member type(like 'e.Property')
+            //and member expression with closure class(like <>c__DisplayClass) and property getter expression compilation opportunity
+            if (memeberExpression.Member.MemberType == MemberTypes.Field ||
+                (memeberExpression.Member.MemberType == MemberTypes.Property))
             {
-                var name = memeberExpression.Member.Name;
-
-                var constantExpression = memeberExpression.Expression as ConstantExpression;
-
-                var field = memeberExpression.Member as FieldInfo;
-
-                var value = field.GetValue(constantExpression.Value);
-
-                if (_sqlDialect.RequireMapping(value))
+                //Brute try
+                try
                 {
-                    Sql.Append($" {_sqlDialect.Map(value)}");
+                    var value = GetMemberValue(memeberExpression);
+
+                    if (_sqlDialect.RequireMapping(value))
+                    {
+                        Sql.Append($" {_sqlDialect.Map(value)}");
+                    }
+                    else
+                    {
+                        Sql.Append($" {value} ");
+                    }
                 }
-                else
+                catch
                 {
-                    Sql.Append($" {value} ");
+                    Sql.Append($" {memeberExpression.Member.DeclaringType.Name}.{memeberExpression.Member.Name} ");
                 }
             }
             else
@@ -112,6 +119,35 @@ namespace QMap.SqlBuilder.Visitors.Native
             }
 
             return memeberExpression;
+        }
+
+        protected object GetMemberValue(MemberExpression memberExpression)
+        {
+            //GetInstance
+            var objectExpression = memberExpression.Expression;
+
+            var lambda = Expression.Lambda<Func<object>>(
+                Expression.Convert(objectExpression, typeof(object))
+            );
+
+            var getInstance = lambda.Compile();
+            object instance = getInstance.Invoke();
+
+            var member = memberExpression.Member;
+            //External value
+            if (member is FieldInfo field)
+            {
+                return field?.GetValue(instance);
+            }
+
+            else if (member is PropertyInfo property)
+            {
+                return property?.GetValue(instance);
+            }
+            else
+            {
+                throw new InvalidOperationException("Cant visit member of type "+ memberExpression.Member.MemberType);
+            }
         }
 
         protected override Expression VisitParameter(ParameterExpression parameterExpression)

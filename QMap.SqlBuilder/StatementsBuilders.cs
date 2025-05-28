@@ -1,6 +1,7 @@
 ﻿using QMap.Core.Dialects;
 using QMap.SqlBuilder.Abstractions;
 using QMap.SqlBuilder.Visitors;
+using QMap.SqlBuilder.Visitors.Native;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -155,11 +156,9 @@ namespace QMap.SqlBuilder
 
         public IWhereBuilder BuildWhere<T>(IFromBuilder fromBuilder, LambdaExpression expression)
         {
-            var visitor = new LambdaVisitor(expression, SqlDialect);
-
-            visitor.Visit()
-                .First()
-                .Visit();
+            var visitor = new NativeVisitor(SqlDialect);
+         
+            visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
 
             this.Sql += $"{fromBuilder.Sql}" + " where " + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
 
@@ -168,12 +167,10 @@ namespace QMap.SqlBuilder
 
         public IWhereBuilder BuildWhere<T>(IUpdateBuilder fromBuilder, LambdaExpression expression)
         {
-            var visitor = new LambdaVisitor(expression, SqlDialect);
+            var visitor = new NativeVisitor(SqlDialect);
 
-            visitor.Visit()
-                .First()
-                .Visit();
-         
+            visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
+               
             this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
 
             return this;

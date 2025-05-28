@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "dvelop-github-actions" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "dvelop-github-actions" ]
 
 jobs:
   build:
@@ -22,3 +22,5 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Publish
+      run: dotnet nuget add source --username ADRNV --password ${{ secrets.QMap-Package-publisher }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"

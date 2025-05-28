@@ -26,3 +26,5 @@ jobs:
       run: dotnet pack --configuration Release
     - name: Publish
       run: dotnet nuget add source --username ADRNV --password ${{ secrets.QMap-Package-publisher }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
+    - name: authoub
+      run: dotnet nuget push "bin/Release/PROJECT_NAME.1.0.0.nupkg" --api-key ${{ secrets.QMap-Package-publisher }} --source "github"

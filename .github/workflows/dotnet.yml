@@ -12,7 +12,7 @@ jobs:
       CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }} 
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0 #fetch-depth is needed for GitVersion
     #Install and calculate the new version with GitVersion  
@@ -39,7 +39,7 @@ jobs:
       run: dotnet pack \QMap\QMap\QMap.csproj -p:Version='${{ steps.gitversion.outputs.SemVer }}' -c Release
    
     - name: Upload NuGet package to GitHub
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: nugetPackage
         path: bin/Release/ 

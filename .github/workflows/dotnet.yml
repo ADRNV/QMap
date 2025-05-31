@@ -1,30 +1,79 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: Action to build and publish the project as a nuget package to github package registry
 
 on:
   push:
-    branches: [ "dvelop-github-actions" ]
-  pull_request:
-    branches: [ "dvelop-github-actions" ]
-
+    branches: [dvelop-github-actions]
+      
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest    
+    outputs: 
+      Version: ${{ steps.gitversion.outputs.SemVer }}
+      CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }} 
+
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 #fetch-depth is needed for GitVersion
+    #Install and calculate the new version with GitVersion  
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: 5.x
+    
+    - name: Set Version
+      uses: gittools/actions/gitversion/execute@v0.9.7
+      id: gitversion # step id used as reference for output values
+   
+    - name: Show version
+      run: |
+        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+     #Build/pack the project
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Pack
-      run: dotnet pack --configuration Release
-    - name: Publish
-      run: dotnet nuget add source --username ADRNV --password ${{ secrets.QMap-Package-publisher }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
-    - name: authoub
-      run: dotnet nuget push "bin/Release/PROJECT_NAME.1.0.0.nupkg" --api-key ${{ secrets.QMap-Package-publisher }} --source "github"
+    
+    - name: Build and Pack NuGet package
+      run: dotnet pack \QMap\QMap\QMap.csproj -p:Version='${{ steps.gitversion.outputs.SemVer }}' -c Release
+   
+    - name: Upload NuGet package to GitHub
+      uses: actions/upload-artifact@v2
+      with:
+        name: nugetPackage
+        path: bin/Release/ 
+  release:
+    runs-on: ubuntu-latest    
+    needs: build
+    if: github.ref == 'refs/heads/dvelop-github-actions' #run on branch
+    
+    steps:  
+    - name: Download nuget package artifact
+      uses: actions/download-artifact@v1.0.0
+      with:
+        name: nugetPackage
+    
+    - name: Prep packages #Auth on NuGet
+      run: dotnet nuget add source --username yourusername --password ${{ secrets.QMAPPACKAGEPUBLISHER }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
+    
+    - name: Push package to GitHub packages 
+      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Push to NuGet
+      run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.QMAPPACKAGEPUBLISHER }}  --source "github"
+    
+    - name: Create Release
+      if: 1 == 0 #needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.QMAPPACKAGEPUBLISHER }} 
+      with:
+        tag_name: ${{ needs.build.outputs.Version }}
+        release_name: Release ${{ needs.build.outputs.Version }}
+    - name: Create Release
+      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ needs.build.outputs.Version }}
+        name: Release ${{ needs.build.outputs.Version }}
+        artifacts: "nugetPackage/*"
+        token: ${{ secrets.QMAPPACKAGEPUBLISHER }}

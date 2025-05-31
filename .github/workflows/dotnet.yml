@@ -52,14 +52,14 @@ jobs:
     - name: Download nuget package artifact
       uses: actions/download-artifact@v4
       with:
-        name: nugetPackage
+        name: QMap
     
     - name: Prep packages #Auth on NuGet
-      run: dotnet nuget add source --username yourusername --password ${{ secrets.QMAPPACKAGEPUBLISHER }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
+      run: dotnet nuget add source --username ADRNV --password ${{ secrets.QMAPPACKAGEPUBLISHER }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
     
     - name: Push package to GitHub packages 
       if: needs.build.outputs.CommitsSinceVersionSource > 0 #Push to NuGet
-      run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.QMAPPACKAGEPUBLISHER }}  --source "github"
+      run: dotnet nuget push QMap/*.nupkg --api-key ${{ secrets.QMAPPACKAGEPUBLISHER }}  --source "github"
     
     - name: Create Release
       if: 1 == 0 #needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change

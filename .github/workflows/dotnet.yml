@@ -4,10 +4,6 @@ on:
   push:
     branches: [dvelop-github-actions]
 
-env:
-  DOTNET_VERSION: '7.0.x' # .NET SDK version to use
-  NUGET_SOURCE: 'https://api.nuget.org/v3/index.json' # Default to NuGet.org
-
 jobs:
   build:
     runs-on: ubuntu-latest    
@@ -41,63 +37,3 @@ jobs:
     
     - name: Build and Pack NuGet package
       run: dotnet pack --configuration Release --no-build --output ./artifacts --include-symbols -p:SymbolPackageFormat=snupkg
-   
-    - name: Upload NuGet package to GitHub
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-packages
-        path: ./artifacts/*.nupkg
-  release:
-    name: Build and Pack
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-      
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal
-      
-    - name: Pack
-      run: dotnet pack --configuration Release --no-build --output ./artifacts --include-symbols -p:SymbolPackageFormat=snupkg
-      
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: nuget-packages
-        path: ./artifacts/*.nupkg
-
-  publish:
-    name: Publish to NuGet
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: nuget-packages
-        path: ./artifacts
-        
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-    - name: Publish to NuGet
-      run: |
-        dotnet nuget push "./artifacts/*.nupkg" \
-          --skip-duplicate \
-          --api-key ${{ secrets.NUGET_API_KEY }} \
-          --source ${{ env.NUGET_SOURCE }}
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

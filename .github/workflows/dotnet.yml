@@ -80,7 +80,6 @@ jobs:
 
   publish:
     name: Publish to NuGet
-    needs: build
     runs-on: ubuntu-latest
     
     steps:

@@ -1,28 +1,44 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: Action to build and publish the project as a nuget package to github package registry
 
 on:
   push:
-    branches: [ "dvelop-github-actions" ]
-  pull_request:
-    branches: [ "dvelop-github-actions" ]
+    branches: [dvelop-github-actions]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest    
+    outputs: 
+      Version: ${{ steps.gitversion.outputs.SemVer }}
+      CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }} 
+
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 #fetch-depth is needed for GitVersion
+    #Install and calculate the new version with GitVersion  
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.2.1
+      with:
+        versionSpec: '6.0.0'
+    
+    - name: Set Version
+      uses: gittools/actions/gitversion/execute@v3.2.1
+      id: gitversion # step id used as reference for output values
+   
+    - name: Show version
+      run: |
+        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+     #Build/pack the project
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
-    - name: Pack
-      run: dotnet pack --configuration Release
-    - name: Publish
-      run: dotnet nuget add source --username ADRNV --password ${{ secrets.QMap-Package-publisher }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ADRNV/index.json"
+      run: dotnet build --configuration Release
+    - name: Pack NuGet package
+      run: dotnet pack --configuration Release /p:Version=${env.assemblySemFileVer} --no-build --output .
+    - name: Push
+      run: dotnet nuget push NuGet.Workflow.${env.assemblySemFileVer}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${secrets.QMAPPACKAGEPUBLISHER}
+      env:
+        GITHUB_TOKEN: ${{ secrets.QMAPPACKAGEPUBLISHER }}

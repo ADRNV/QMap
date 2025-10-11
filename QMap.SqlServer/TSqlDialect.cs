@@ -44,7 +44,7 @@ namespace QMap.SqlServer
 
         public override IDbDataParameter BuildParameter(ref IDbCommand dbCommand, string name, object value, params object[] options)
         {
-            var parameter = ((SqlCommand)dbCommand).CreateParameter();
+            var parameter = dbCommand.CreateParameter();
 
             parameter.ParameterName = name;
             parameter.Value = value;
@@ -54,7 +54,7 @@ namespace QMap.SqlServer
 
         public override IDbCommand BuildParameters(IDbCommand dbCommand, Dictionary<string, object> namedParameters)
         {
-            IDbCommand parametrizedCommand = (SqlCommand)dbCommand;
+            IDbCommand parametrizedCommand = dbCommand;
 
             foreach (var parameterName in namedParameters.Keys)
             {

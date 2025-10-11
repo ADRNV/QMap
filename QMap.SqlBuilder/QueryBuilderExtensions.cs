@@ -19,16 +19,24 @@ namespace QMap.SqlBuilder
                 .BuildFrom(queryBuilder, entity, null!);
         }
 
-        public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression)
+        public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression, out Dictionary<string, object> parameters)
         {
-            return new WhereBuilder(queryBuilder.SqlDialect)
+            var builder = new WhereBuilder(queryBuilder.SqlDialect)
                .BuildWhere<T>(queryBuilder, expression);
+
+            parameters = builder.Parameters;
+
+            return builder;
         }
 
-        public static IQueryBuilder Where<T>(this IUpdateBuilder queryBuilder, LambdaExpression expression)
+        public static IQueryBuilder Where<T>(this IUpdateBuilder queryBuilder, LambdaExpression expression, out Dictionary<string, object> parameters)
         {
-            return new WhereBuilder(queryBuilder.SqlDialect)
+            var builder = new WhereBuilder(queryBuilder.SqlDialect)
                .BuildWhere<T>(queryBuilder, expression);
+            
+            parameters = builder.Parameters;
+
+            return builder;
         }
 
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)

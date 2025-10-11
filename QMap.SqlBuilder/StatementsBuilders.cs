@@ -15,7 +15,7 @@ namespace QMap.SqlBuilder
         private bool _canBeTerminalStatement;
         public ISqlDialect SqlDialect { get; }
 
-        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object> Parameters { get; protected set; } = new Dictionary<string, object>();
 
         public StatementsBuilders(ISqlDialect sqlDialect)
         {
@@ -160,7 +160,9 @@ namespace QMap.SqlBuilder
          
             visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
 
-            this.Sql += $"{fromBuilder.Sql}" + " where " + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
+            Parameters = visitor.Parameters;
+
+            this.Sql += $"{fromBuilder.Sql}" + " where \n" + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
 
             return this;
         }

@@ -1,5 +1,9 @@
 using AutoFixture;
+using Azure;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using QMap.Core.Dialects;
+using QMap.SqlBuilder;
 using QMap.Tests.Share;
 using QMap.Tests.Share.Common;
 using QMap.Tests.Share.DataBase;
@@ -410,6 +414,28 @@ namespace QMap.Tests
                 connection.Close();
 
                 context.Database.EnsureDeleted();
+            });
+        }
+
+        [Fact]
+        public void Select_Should_Not_Drop_Statemant()
+        {
+            var builder = new StatementsBuilders(new SqlDialectBase());
+
+            _connectionFactories.ForEach(c =>
+            {
+
+                var context = c.GetDbContext<TestContext>();
+
+                context.Database.EnsureCreated();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                connection.Where<TypesTestEntity>((TypesTestEntity t) => t.StringField == "\'DROP TABLE TypesTestEntity;--'");
+                
+                context.TypesTestEntity.Count();
             });
         }
     }

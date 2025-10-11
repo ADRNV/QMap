@@ -35,7 +35,7 @@ namespace QMap.SqlBuilder.Tests
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1, out var parameters)
                 .Build();
 
             _parsers.ToList().ForEach(p =>
@@ -111,7 +111,7 @@ namespace QMap.SqlBuilder.Tests
 
             var sql = queryBuilder
                 .Update<TypesTestEntity, int>(connectionFake, out var _, () => entity.IntField, entity.IntField)
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0, out var parameters)
                 .Build();
 
             _parsers.ToList().ForEach(p =>
@@ -139,7 +139,7 @@ namespace QMap.SqlBuilder.Tests
             {
                var sql = queryBuilder
                 .Update<TypesTestEntity, string>(connectionFake, out var _, () => entity.ToString(), "")
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0, out var parameters)
                 .Build();
             });
         }
@@ -198,7 +198,7 @@ namespace QMap.SqlBuilder.Tests
             var sql = queryBuilder
                 .Delete<TypesTestEntity>()
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id < 0)
+                .Where<TypesTestEntity>((TypesTestEntity t) => t.Id < 0, out var parameters)
                 .Build();
 
             _parsers.ToList().ForEach(p =>

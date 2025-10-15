@@ -3,7 +3,9 @@ name: Action to build and publish the project as a nuget package to github packa
 on:
   push:
     branches: [dvelop-github-actions]
-
+env:
+  DOTNET_VERSION: 8.0.414
+  
 jobs:
   build:
     runs-on: ubuntu-latest    
@@ -31,14 +33,10 @@ jobs:
         echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
      #Build/pack the project
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Build
-      run: dotnet build --configuration Release
-    - name: Pack NuGet package
-      run: dotnet pack --configuration Release /p:Version=${env.assemblySemFileVer} --no-build --output .
-    - name: Push
-      run: dotnet nuget push NuGet.Workflow.${env.assemblySemFileVer}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${secrets.QMAPPACKAGEPUBLISHER}
-      env:
-        GITHUB_TOKEN: ${{ secrets.QMAPPACKAGEPUBLISHER }}
+      run: | 
+       echo "Build solution"
+       dotnet build --configuration Release

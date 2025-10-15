@@ -45,10 +45,12 @@ namespace QMap
             var sql = new StatementsBuilders(connection.Dialect)
                 .Select(typeof(T))
                 .From(typeof(T))
-                .Where<T>(predicate)
+                .Where<T>(predicate, out var parameters)
                 .Build();
 
             command.CommandText = sql;
+
+            connection.Dialect.BuildParameters(command, parameters);
 
             return queryMapper.Map<T>(command.ExecuteReader());
         }
@@ -85,12 +87,14 @@ namespace QMap
 
             var sql = new StatementsBuilders(connection.Dialect)
                 .Update<T,V>(connection, out var parameters, propertySelector, value)
-                .Where<T>(predicate)
+                .Where<T>(predicate, out var parameters1)
                 .Build();
             
             command.CommandText = sql;
 
-            connection.Dialect.BuildParameters(command, parameters);
+            var allParameters = parameters.AsEnumerable().Concat(parameters1).ToDictionary((p) => p.Key, (p) => p.Value);
+
+            connection.Dialect.BuildParameters(command, allParameters);
 
             command.ExecuteNonQuery();
         }
@@ -101,7 +105,7 @@ namespace QMap
             var sql = new StatementsBuilders(connection.Dialect)
                 .Delete<T>()
                 .From(typeof(T))
-                .Where<T>(predicate)
+                .Where<T>(predicate, out var parameters)
                 .Build();
 
             command.CommandText = sql;

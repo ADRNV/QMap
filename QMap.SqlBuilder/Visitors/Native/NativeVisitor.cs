@@ -1,4 +1,5 @@
 ﻿using QMap.Core.Dialects;
+using System.Data;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,6 +9,12 @@ namespace QMap.SqlBuilder.Visitors.Native
 {
     public class NativeVisitor : ExpressionVisitor
     {
+        public Action<Expression> NodeVisited { get; set; }
+        
+        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+
+        private int param_counter = 0;
+
         public StringBuilder Sql
         {
             get;
@@ -20,7 +27,7 @@ namespace QMap.SqlBuilder.Visitors.Native
         public NativeVisitor(ISqlDialect sqlDialect)
         {
             _sqlDialect = sqlDialect;
-
+            
             Sql = new StringBuilder();
         }
 
@@ -65,15 +72,10 @@ namespace QMap.SqlBuilder.Visitors.Native
 
         protected override Expression VisitConstant(ConstantExpression constantExpression)
         {
-            if (_sqlDialect.RequireMapping(constantExpression.Value))
-            {
-                Sql.Append($" {_sqlDialect.Map(constantExpression.Value)}");
-            }
-            else
-            {
-                Sql.Append($" {constantExpression.Value} ");
-            }
-
+            param_counter++;
+            Parameters.Add($"{_sqlDialect.ParameterName}p{param_counter}", _sqlDialect.Map(constantExpression.Value));
+            Sql.Append($" {_sqlDialect.ParameterName}p{param_counter} ");
+           
             return constantExpression; 
         }
 

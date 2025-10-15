@@ -5,6 +5,7 @@ using QMap.SqlBuilder.Visitors.Native;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace QMap.SqlBuilder
 {
@@ -15,7 +16,7 @@ namespace QMap.SqlBuilder
         private bool _canBeTerminalStatement;
         public ISqlDialect SqlDialect { get; }
 
-        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object> Parameters { get; protected set; } = new Dictionary<string, object>();
 
         public StatementsBuilders(ISqlDialect sqlDialect)
         {
@@ -160,7 +161,10 @@ namespace QMap.SqlBuilder
          
             visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
 
-            this.Sql += $"{fromBuilder.Sql}" + " where " + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
+            Parameters = visitor.Parameters;
+
+            this.Sql += FormattableStringFactory
+                .Create("{0} where \n {1}", fromBuilder.Sql, PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases));
 
             return this;
         }
@@ -170,8 +174,11 @@ namespace QMap.SqlBuilder
             var visitor = new NativeVisitor(SqlDialect);
 
             visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
-               
-            this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
+            
+            Parameters = visitor.Parameters;
+            
+            this.Sql += FormattableStringFactory
+                .Create("{0} where {1}", fromBuilder.Sql, visitor.Sql.ToString());
 
             return this;
         }

@@ -68,7 +68,7 @@ namespace QMap.SqlBuilder.Tests
             queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1, out var parameters)
                 .Build();
         }
 
@@ -81,7 +81,7 @@ namespace QMap.SqlBuilder.Tests
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 1, out var parameters)
                 .Build();
         }
 
@@ -121,7 +121,7 @@ namespace QMap.SqlBuilder.Tests
                 queryBuilder
                     .Select(typeof(TypesTestEntity))
                     .From(typeof(TypesTestEntity))
-                    .Where<TypesTestEntity>((TypesTestEntity t) => t.StringField == external);
+                    .Where<TypesTestEntity>((TypesTestEntity t) => t.StringField == external, out var parameters);
             });
         }
     }

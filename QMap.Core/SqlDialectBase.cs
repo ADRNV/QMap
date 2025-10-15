@@ -22,8 +22,10 @@ namespace QMap.Core.Dialects
             {
                 DateTime dateTimeObj => $"{dateTimeObj.Year}{dateTimeObj.Month}{dateTimeObj.Month}",
                 string strObject => $"{Quotes}{strObject}{Quotes}",
+                int intObj => intObj.ToString(),
+                bool boolObj => boolObj.ToString(),
                 null => null,
-                _ => throw new InvalidOperationException()
+                _ => throw new InvalidOperationException($"Cant map type for {obj.GetType()}")
             };
         }
 

@@ -1,0 +1,58 @@
+name: Action to build and publish the project as a nuget package to github package registry
+
+on:
+  push:
+    branches: [dvelop-github-actions]
+env:
+  DOTNET_VERSION: 8.0.414
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+    outputs: 
+      Version: ${{ steps.gitversion.outputs.SemVer }}
+      CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }} 
+      
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 #fetch-depth is needed for GitVersion
+    #Install and calculate the new version with GitVersion  
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.2.1
+      with:
+        versionSpec: '6.0.0'
+    
+    - name: Set Version
+      uses: gittools/actions/gitversion/execute@v3.2.1
+      id: gitversion # step id used as reference for output values
+   
+    - name: Show version
+      run: |
+        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+     #Build/pack the project
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Build
+      run: | 
+       echo "Build solution"
+       dotnet build --configuration Release
+  publish:
+    runs-on: ubuntu-latest       
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        run: | 
+          echo "Publish"
+          dotnet publish ./QMap.sln -c Release --nologo -p:SkipTests=true
+        
+      
+   

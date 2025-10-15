@@ -30,12 +30,14 @@ namespace QMap.Mapping
                     .AsReadOnly();
             }
 
-            if (MapDelegate is null)
-            {
-                MapDelegate = (Func<IDataReader, T>)BuildMapExpression<T>(dataReader);
-            }
+            IsMatchToTable(dataReader, ReflectedPropertyNames);
 
-            return ((Func<IDataReader, T>)(MapDelegate)).Invoke(dataReader);
+            //if (MapDelegate is null)
+            //{
+            //    MapDelegate = 
+            //}
+            //return ((Func<IDataReader, T>)BuildMapExpression<T>(dataReader)).Invoke(dataReader);
+            return ((Func<IDataReader, T>)BuildMapExpression<T>(dataReader)).Invoke(dataReader);
         }
 
         private Func<IDataReader, T> BuildMapExpression<T>(IDataReader dataReader)
@@ -44,7 +46,9 @@ namespace QMap.Mapping
 
             var newExp = Expression.New(typeof(T));
             var memberInit = Expression.MemberInit(newExp, typeof(T).GetProperties()
-              .Select(x => Expression.Bind(x, BuildReadColumnExpression(readerParam, dataReader, x))));
+              //unnecessary type converting ?
+              .Select(x => Expression.Bind(x, Expression.Convert(BuildReadColumnExpression(readerParam, dataReader, x), x.PropertyType)))
+              );
 
             return Expression.Lambda<Func<IDataReader, T>>(memberInit, readerParam)
                 .Compile();
@@ -57,10 +61,31 @@ namespace QMap.Mapping
                 .Where(m => m.Name == (nameof(IDataReaderExtensions.GetFromColumn)))
                 .FirstOrDefault();
 
-            return Expression.Call(type: typeof(IDataReaderExtensions),
-               methodName: method.Name,
-               typeArguments: new Type[] { prop.PropertyType },
-               arguments: new Expression[] { readerExpression, Expression.Constant(prop.Name) });
+            var value = dataReader.GetValue(dataReader.GetOrdinal(prop.Name));
+
+            var valueType = value.GetType();
+
+            if (valueType != prop.PropertyType) 
+            { 
+                var type = typeof(Convert);
+
+                var changeTypeMethod = type.GetMethod("ChangeType", new Type[] { typeof(object), typeof(Type) });
+
+                var parseExpression = Expression.Call(
+                    changeTypeMethod,
+                    Expression.Constant(value, typeof(object)),
+                    Expression.Constant(prop.PropertyType)
+                );
+
+                return parseExpression;                         
+            }
+            else
+            {
+                return Expression.Call(type: typeof(IDataReaderExtensions),
+              methodName: method.Name,
+              typeArguments: new Type[] { prop.PropertyType },
+              arguments: new Expression[] { readerExpression, Expression.Constant(prop.Name) });
+            }  
         }
     }
 }

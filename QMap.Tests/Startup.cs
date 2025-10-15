@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using QMap.Core;
 using QMap.Tests.Common;
 using QMap.Tests.Share;
+using QMap.Tests.Share.Common;
 using QMap.Tests.Share.DataBase;
 
 namespace QMap.Tests
@@ -15,25 +17,34 @@ namespace QMap.Tests
                 .AddJsonFile(@"TestConfiguration.json", false)
                 .Build();
 
+
+
             services.AddSingleton<IConfiguration>(configuration);
 
-            services.AddTransient<IEnumerable<IQMapConnectionFactoryBase>, List<IQMapConnectionFactoryBase>>(sp =>
+            services.AddScoped<IQMapConnectionFactory, SqlServerConnectionFactory>(sp =>
             {
-                var configuration = sp.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("TestDbConnectionSqlServer");
+                
+                var options = new DbContextOptionsBuilder()
+                    .EnableDetailedErrors()
+                    .UseSqlServer(connectionString)
+                    .Options;
 
-                var factories = new List<IQMapConnectionFactoryBase>
-                {
-                    new SqlServerQMapConnectionFactory(configuration)
-                };
-
-                return factories;
+                return new SqlServerConnectionFactory(configuration, options);
             });
 
-            services.AddDbContext<TestContext>(options =>
+            services.AddScoped<IQMapConnectionFactory, SqliteConnectionFactory>(sp =>
             {
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                options.UseSqlServer(configuration.GetConnectionString("TestDbConnectionSqlServer"));
+                var connectionString = configuration.GetConnectionString("TestDbConnectionSqlite");
+
+                var options = new DbContextOptionsBuilder()
+                    .EnableDetailedErrors()
+                    .UseSqlite(connectionString)
+                    .Options;
+
+                return new SqliteConnectionFactory(configuration, options);
             });
+
         }
     }
 }

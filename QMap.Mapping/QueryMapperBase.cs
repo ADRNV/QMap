@@ -1,4 +1,5 @@
 ﻿using QMap.Core.Mapping;
+using QMap.Mapping.Enumerable;
 using System.Data;
 
 namespace QMap.Mapping
@@ -14,12 +15,9 @@ namespace QMap.Mapping
 
         public virtual IEnumerable<T> Map<T>(IDataReader dataReader) where T : class, new()
         {
-            List<T> rows = new List<T>();
+            var enumerator = new ReaderEnumerator<T>(dataReader, _entityMapper);
 
-            while (dataReader.Read())
-            {
-                rows.Add(_entityMapper.Map<T>(dataReader));
-            }
+            var rows = new EnumerableReader<T>(enumerator);
 
             return rows;
         }

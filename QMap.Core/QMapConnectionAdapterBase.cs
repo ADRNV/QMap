@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using QMap.Core.Dialects;
+using System.Data;
 
 namespace QMap.Core
 {
@@ -7,6 +8,11 @@ namespace QMap.Core
         protected C _connection;
 
         public QMapConnectionAdapterBase(C connection)
+        {
+            _connection = connection;
+        }
+
+        public QMapConnectionAdapterBase(C connection, ISqlDialect sqlDialect)
         {
             _connection = connection;
         }
@@ -23,6 +29,8 @@ namespace QMap.Core
         public virtual int ConnectionTimeout { get => _connection.ConnectionTimeout; }
         public virtual string Database { get => _connection.Database; }
         public virtual ConnectionState State { get => _connection.State; }
+
+        public virtual ISqlDialect Dialect => new SqlDialectBase();
 
         public virtual IDbTransaction BeginTransaction()
         {

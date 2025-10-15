@@ -23,7 +23,10 @@ namespace QMap.Mapping
         {
             if (dataReader.TryGetOrdinal(columnName, out int order))
             {
-                return (T)dataReader.GetValue(order);
+                var value = dataReader.GetValue(order);
+
+                //TODO: replace with Convert.ChangeType() expression in EntityMapper
+                return (T)(value);
             }
             else
             {

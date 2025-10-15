@@ -1,12 +1,12 @@
 ﻿using QMap.Core.Dialects;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 
-namespace QMap.SqlServer
+namespace QMap.Sqlite
 {
-    public class TSqlDialect : SqlDialectBase
+    public class SqliteDialect : SqlDialectBase
     {
-        public TSqlDialect()
+        public SqliteDialect()
         {
             _mappingTypes.Add(typeof(bool));
             _mappingTypes.Add(typeof(Boolean));
@@ -44,7 +44,7 @@ namespace QMap.SqlServer
 
         public override IDbDataParameter BuildParameter(ref IDbCommand dbCommand, string name, object value, params object[] options)
         {
-            var parameter = dbCommand.CreateParameter();
+            var parameter = ((SqliteCommand)dbCommand).CreateParameter();
 
             parameter.ParameterName = name;
             parameter.Value = value;
@@ -54,7 +54,7 @@ namespace QMap.SqlServer
 
         public override IDbCommand BuildParameters(IDbCommand dbCommand, Dictionary<string, object> namedParameters)
         {
-            IDbCommand parametrizedCommand = dbCommand;
+            IDbCommand parametrizedCommand = (SqliteCommand)dbCommand;
 
             foreach (var parameterName in namedParameters.Keys)
             {
@@ -68,28 +68,28 @@ namespace QMap.SqlServer
             return parametrizedCommand;
         }
 
-        protected override SqlParameter AssignValueWithType(ref IDbDataParameter parameter)
+        protected override SqliteParameter AssignValueWithType(ref IDbDataParameter parameter)
         {
-            var sqlParam = ((SqlParameter)parameter);
+            var sqlParam = ((SqliteParameter)parameter);
 
             var typedParam = sqlParam.Value switch
             {
-                DateTime dateTimeObj => sqlParam.SqlDbType = SqlDbType.DateTime,
-                string strObject => sqlParam.SqlDbType = SqlDbType.VarChar,
-                Int16 => sqlParam.SqlDbType = SqlDbType.SmallInt,
-                Int32 => sqlParam.SqlDbType = SqlDbType.Int,
-                Int64 => sqlParam.SqlDbType = SqlDbType.BigInt,
-                Decimal => sqlParam.SqlDbType = SqlDbType.Decimal,
-                float => sqlParam.SqlDbType = SqlDbType.Float,
-                double => sqlParam.SqlDbType = SqlDbType.Real,
-                Guid => sqlParam.SqlDbType = SqlDbType.UniqueIdentifier,
-                byte => sqlParam.SqlDbType = SqlDbType.VarBinary,
-                byte[] => sqlParam.SqlDbType = SqlDbType.VarBinary,
-                bool => sqlParam.SqlDbType = SqlDbType.Bit,
+                DateTime dateTimeObj => sqlParam.SqliteType = SqliteType.Text,
+                string strObject => sqlParam.SqliteType = SqliteType.Text,
+                Int16 => sqlParam.SqliteType = SqliteType.Integer,
+                Int32 => sqlParam.SqliteType = SqliteType.Integer,
+                Int64 => sqlParam.SqliteType = SqliteType.Integer,
+                Decimal => sqlParam.SqliteType = SqliteType.Real,
+                float => sqlParam.SqliteType = SqliteType.Real,
+                double => sqlParam.SqliteType = SqliteType.Real,
+                Guid => sqlParam.SqliteType = SqliteType.Text,
+                byte => sqlParam.SqliteType = SqliteType.Blob,
+                byte[] => sqlParam.SqliteType = SqliteType.Blob,
+                bool => sqlParam.SqliteType = SqliteType.Text,
                 _ => throw new NotImplementedException()
             };
 
-            sqlParam.SqlDbType = typedParam;
+            sqlParam.SqliteType = typedParam;
 
             return sqlParam;
         }

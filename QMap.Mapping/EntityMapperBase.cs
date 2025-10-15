@@ -1,4 +1,5 @@
 ﻿using QMap.Core.Mapping;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Reflection;
 
@@ -6,6 +7,21 @@ namespace QMap.Mapping
 {
     public class EntityMapperBase : IEntityMapper
     {
+        public void IsMatchToTable(IDataReader dataReader, ReadOnlyCollection<PropertyInfo> properties)
+        {
+            try
+            {
+                foreach (var property in properties)
+                {
+                    dataReader.GetOrdinal(property.Name);
+                }
+            }
+            catch
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
         public virtual T Map<T>(IDataReader dataReader) where T : class, new()
         {
             var typeInfo = typeof(T);

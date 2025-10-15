@@ -4,7 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
+		<IsPublishable>false</IsPublishable>
+	</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QMap.Core\QMap.Core.csproj" />

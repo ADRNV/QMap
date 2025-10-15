@@ -92,7 +92,9 @@ namespace QMap
             
             command.CommandText = sql;
 
-            connection.Dialect.BuildParameters(command, parameters);
+            var allParameters = parameters.AsEnumerable().Concat(parameters1).ToDictionary((p) => p.Key, (p) => p.Value);
+
+            connection.Dialect.BuildParameters(command, allParameters);
 
             command.ExecuteNonQuery();
         }

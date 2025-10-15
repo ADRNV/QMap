@@ -5,6 +5,7 @@ using QMap.SqlBuilder.Visitors.Native;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace QMap.SqlBuilder
 {
@@ -162,7 +163,8 @@ namespace QMap.SqlBuilder
 
             Parameters = visitor.Parameters;
 
-            this.Sql += $"{fromBuilder.Sql}" + " where \n" + PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases);
+            this.Sql += FormattableStringFactory
+                .Create("{0} where \n {1}", fromBuilder.Sql, PushAliases(visitor.Sql.ToString(), fromBuilder.Aliases));
 
             return this;
         }
@@ -172,8 +174,11 @@ namespace QMap.SqlBuilder
             var visitor = new NativeVisitor(SqlDialect);
 
             visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
-               
-            this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
+            
+            Parameters = visitor.Parameters;
+            
+            this.Sql += FormattableStringFactory
+                .Create("{0} where {1}", fromBuilder.Sql, visitor.Sql.ToString());
 
             return this;
         }

@@ -2,7 +2,7 @@ name: Action to build and publish the project as a nuget package to github packa
 
 on:
   push:
-    branches: [dvelop-github-actions]
+    branches: [master]
 env:
   DOTNET_VERSION: 8.0.414
   

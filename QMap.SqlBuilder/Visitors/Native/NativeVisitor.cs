@@ -27,7 +27,7 @@ namespace QMap.SqlBuilder.Visitors.Native
         public NativeVisitor(ISqlDialect sqlDialect)
         {
             _sqlDialect = sqlDialect;
-
+            
             Sql = new StringBuilder();
         }
 

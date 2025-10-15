@@ -172,7 +172,9 @@ namespace QMap.SqlBuilder
             var visitor = new NativeVisitor(SqlDialect);
 
             visitor.VisitPredicateLambda((Expression<Func<T, bool>>)expression);
-               
+            
+            Parameters = visitor.Parameters;
+            
             this.Sql += $"{fromBuilder.Sql}" + " where " + visitor.Sql.ToString();
 
             return this;

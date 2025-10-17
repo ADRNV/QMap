@@ -496,5 +496,34 @@ namespace QMap.Tests
                 context.TypesTestEntity.Count();
             });
         }
+
+        [Fact]
+        public void Delete_Should_Not_Pass_Drop_Statemant_When_Injection_In_Where()
+        {
+            var builder = new StatementsBuilders(new SqlDialectBase());
+
+            _connectionFactories.ForEach(c =>
+            {
+
+                var context = c.GetDbContext<TestContext>();
+
+                context.Database.EnsureCreated();
+
+                using var connection = c.Create();
+
+                connection.Open();
+
+                var entity = new Fixture()
+                .Build<TypesTestEntity>()
+                .Without(t => t.Id)
+                .Create();
+
+                context.TypesTestEntity.Add(entity);
+                context.SaveChanges();
+                connection.Delete<TypesTestEntity>((TypesTestEntity t) => t.StringField != "\'DROP TABLE TypesTestEntity;--");
+
+                context.TypesTestEntity.Count();
+            });
+        }
     }
 }

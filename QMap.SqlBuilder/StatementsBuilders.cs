@@ -109,14 +109,16 @@ namespace QMap.SqlBuilder
 
         public IFromBuilder BuildFrom(ISelectBuilder quryBuilder, Type entity, params Type[] entities)
         {
-            this.Sql += $"{quryBuilder.Sql}" + $" from {entity.Name} " + _aliases.GetOrAdd(entity.Name, (ak) => NameToAlias(entity.Name));
+            this.Sql += FormattableStringFactory
+                .Create("{0} from {1} {2}", quryBuilder.Sql, entity.Name, _aliases.GetOrAdd(entity.Name, (ak) => NameToAlias(entity.Name)));
 
             return this;
         }
 
         public IFromBuilder BuildFrom(IDeleteBuilder quryBuilder, Type entity, params Type[] entities)
         {
-            this.Sql += $"{quryBuilder.Sql}" + $" from {entity.Name} ";
+            this.Sql += FormattableStringFactory
+                .Create("{0} from {1}", quryBuilder.Sql, entity.Name);
 
             return this;
         }
@@ -310,8 +312,6 @@ namespace QMap.SqlBuilder
         public DeleteBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
         {
         }
-
-        public Dictionary<string, object> Parameters => throw new NotImplementedException();
 
         private Type _entity = null;
 

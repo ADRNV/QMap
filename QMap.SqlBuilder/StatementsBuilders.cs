@@ -311,8 +311,6 @@ namespace QMap.SqlBuilder
         {
         }
 
-        public Dictionary<string, object> Parameters => throw new NotImplementedException();
-
         private Type _entity = null;
 
         public string Build()

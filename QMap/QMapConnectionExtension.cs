@@ -103,12 +103,16 @@ namespace QMap
         {
             var command = connection.CreateCommand();
             var sql = new StatementsBuilders(connection.Dialect)
-                .Delete<T>()
+                .Delete<T>(out var parameters)
                 .From(typeof(T))
-                .Where<T>(predicate, out var parameters)
+                .Where<T>(predicate, out var parameters1)
                 .Build();
 
+            var allParameters = parameters.AsEnumerable().Concat(parameters1).ToDictionary((p) => p.Key, (p) => p.Value);
+
             command.CommandText = sql;
+
+            connection.Dialect.BuildParameters(command, allParameters);
 
             command.ExecuteNonQuery();
         }

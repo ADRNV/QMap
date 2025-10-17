@@ -3,6 +3,7 @@ name: Action to build and publish the project as a nuget package to github packa
 on:
   push:
     branches: [dvelop-github-actions]
+  pull_request:
 env:
   DOTNET_VERSION: 8.0.414
   
@@ -40,6 +41,7 @@ jobs:
       run: | 
        echo "Build solution"
        dotnet build --configuration Release
+       
   publish:
     runs-on: ubuntu-latest       
     steps:

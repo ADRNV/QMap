@@ -4,6 +4,7 @@ on:
     
 env:
   DOTNET_VERSION: 8.0.414
+  GITHUB_TOKEN: ${{ secrets.QMap-Package-publisher }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +21,9 @@ jobs:
       run: dotnet build --configuration Release /p:Version=${VERSION}
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
+    - name: Puush package
+      run: dotnet nuget push NuGet.Workflow.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
+    
 
     
 

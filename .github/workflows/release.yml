@@ -24,7 +24,7 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output .
     - name: Puush package
-      run: dotnet nuget push NuGet.Workflow.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
+      run: dotnet nuget push NuGet.Workflow.0.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
     
 
     

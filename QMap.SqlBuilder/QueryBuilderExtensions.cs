@@ -1,5 +1,7 @@
-﻿using QMap.SqlBuilder.Abstractions;
+﻿using QMap.Core;
+using QMap.SqlBuilder.Abstractions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace QMap.SqlBuilder
 {
@@ -7,31 +9,81 @@ namespace QMap.SqlBuilder
     {
         public static IFromBuilder From(this ISelectBuilder queryBuilder, Type entity, params Type[] entities)
         {
-            return new FromBuilder()
+            return new FromBuilder(queryBuilder.SqlDialect)
                 .BuildFrom(queryBuilder, entity, entities);
         }
 
-        public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression)
+        public static IFromBuilder From(this IDeleteBuilder queryBuilder, Type entity)
         {
-            return new WhereBuilder()
+            return new FromBuilder(queryBuilder.SqlDialect)
+                .BuildFrom(queryBuilder, entity, null!);
+        }
+
+        public static IQueryBuilder Where<T>(this IFromBuilder queryBuilder, LambdaExpression expression, out Dictionary<string, object> parameters)
+        {
+            var builder = new WhereBuilder(queryBuilder.SqlDialect)
                .BuildWhere<T>(queryBuilder, expression);
+
+            parameters = builder.Parameters;
+
+            return builder;
+        }
+
+        public static IQueryBuilder Where<T>(this IUpdateBuilder queryBuilder, LambdaExpression expression, out Dictionary<string, object> parameters)
+        {
+            var builder = new WhereBuilder(queryBuilder.SqlDialect)
+               .BuildWhere<T>(queryBuilder, expression);
+            
+            parameters = builder.Parameters;
+
+            return builder;
         }
 
         public static ISelectBuilder Select(this IQueryBuilder queryBuilder, Type entity)
         {
-            return new SelectBuilder()
+            return new SelectBuilder(queryBuilder.SqlDialect)
                  .BuidSelect(entity);
         }
 
-        public static ISelectBuilder Select(Expression entity)
+        public static IUpdateBuilder Update<T, V>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, Expression<Func<V>> propertySelectors, V value)
         {
-            return new SelectBuilder()
-                 .BuidSelect(entity);
+            var builder = new UpdateBuilder(queryBuilder.SqlDialect)
+                .BuildUpdate<T, V>(propertySelectors, value);
+
+            parameters = builder.Parameters;
+
+            return builder;
+        }
+
+        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder)
+        {
+            return new DeleteBuilder(queryBuilder.SqlDialect)
+                .BuildDelete<T>();
         }
 
         public static string Build(this IQueryBuilder queryBuilder)
         {
             return queryBuilder.Build();
+        }
+
+        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Func<PropertyInfo, bool> exceptProperty)
+        {
+            var builder = new InsertBuilder(queryBuilder.SqlDialect)
+                .BuildInsertExcept(entity, exceptProperty);
+
+            parameters = builder.Parameters;
+
+            return builder.Build();
+        }
+
+        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity)
+        {
+            var builder = new InsertBuilder(queryBuilder.SqlDialect)
+                .BuildInsert(entity);
+
+            parameters = builder.Parameters;
+
+            return builder.Build();
         }
     }
 }

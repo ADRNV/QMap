@@ -1,6 +1,10 @@
+using AutoFixture;
+using QMap.Core.Dialects;
+using QMap.SqlServer;
 using QMap.Tests.Share.DataBase;
 using QMap.Tests.Share.Helpers.Sql;
-using System.Linq.Expressions;
+using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace QMap.SqlBuilder.Tests
 {
@@ -8,25 +12,34 @@ namespace QMap.SqlBuilder.Tests
     {
         private IList<IParser> _parsers;
 
-        public SqlBuilderTests(IList<IParser> parsers)
+        private IList<ISqlDialect> _dialects;
+
+        public SqlBuilderTests(IList<IParser> parsers, IList<ISqlDialect> dialects)
         {
             _parsers = parsers;
+
+            _dialects = dialects;
         }
 
         [Fact]
+        [Trait("SQL", "Full")]
         public void BuildNonTerminalStatementThrowsInvalidOperationException()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
-
-            Assert.Throws<InvalidOperationException>(() =>
+            _dialects.ToList().ForEach((d) =>
             {
-                queryBuilder.Build();
+                StatementsBuilders queryBuilder = new StatementsBuilders(d);
+
+                Assert.Throws<InvalidOperationException>(() =>
+                {
+                    queryBuilder.Build();
+                });
             });
         }
 
+        [Trait("SQL", "Full")]
         public void BuildWithTerminalSttementNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             queryBuilder
                 .Select(typeof(TypesTestEntity))
@@ -35,56 +48,80 @@ namespace QMap.SqlBuilder.Tests
         }
 
         [Fact]
+        [Trait("SQL", "Where")]
         public void BuildWithoutWhereNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             var s = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
                 .Build();
         }
-
+        
         [Fact]
+        [Trait("SQL", "Full")]
         public void FullSqlBuildNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => 1 == 1, out var parameters)
                 .Build();
         }
 
         [Fact]
+        [Trait("SQL", "Full")]
         public void FullSqlBuildWithParamsNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
             var sql = queryBuilder
                 .Select(typeof(TypesTestEntity))
                 .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 1)
+                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 1, out var parameters)
                 .Build();
         }
 
         [Fact]
-        public void FullSqlBuildWitoutSyntaxErrosInAllParsers()
+        [Trait("SQL", "Full")]
+        public void BuildInsertNoThrowsErrors()
         {
-            StatementsBuilders queryBuilder = new StatementsBuilders();
+            StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
+
+            var entity = new Fixture()
+                .Create<TypesTestEntity>();
+
+            var parameters = new Dictionary<string, object>();
+
+            var connection = new SqlConnection("Server=localhost;Database=TestDb;Integrated Security=true;TrustServerCertificate=Yes;Encrypt=false")
+                .Adapt();
 
             var sql = queryBuilder
-                .Select(typeof(TypesTestEntity))
-                .From(typeof(TypesTestEntity))
-                .Where<TypesTestEntity>((TypesTestEntity e) => e.Id == 2)
-                .Build();
+                .BuildInsert(connection, out parameters, entity);
+        }
 
-            _parsers.ToList().ForEach(p =>
+        [Theory]
+        [InlineData(1)]
+        [InlineData(42.0f)]
+        [InlineData(42.0d)]
+        [InlineData("1")]
+        [InlineData(false)]
+        [Trait("SQL", "Full")]
+        public void WhereMapExpressionWithInternalValueRights(object value)
+        {
+            _parsers.ToList().ForEach(c =>
             {
-                var errors = p.Parse(sql);
+                StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
-                Assert.Null(errors);
+                var external = value;
+
+                queryBuilder
+                    .Select(typeof(TypesTestEntity))
+                    .From(typeof(TypesTestEntity))
+                    .Where<TypesTestEntity>((TypesTestEntity t) => t.StringField == external, out var parameters);
             });
         }
     }

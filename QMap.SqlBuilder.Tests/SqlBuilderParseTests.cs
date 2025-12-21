@@ -84,7 +84,7 @@ namespace QMap.SqlBuilder.Tests
                  .Create<TypesTestEntity>();
 
             var sql = queryBuilder
-                .BuildInsert(connectionFake, out var _, entity, (p) => p.Name == "Id");
+                .BuildInsert(connectionFake, out var _, entity, (p) => p.Id);
 
             _parsers.ToList().ForEach(p =>
             {

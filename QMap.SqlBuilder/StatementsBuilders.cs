@@ -205,6 +205,7 @@ namespace QMap.SqlBuilder
 
     public class InsertBuilder : StatementsBuilders, IInsertBuilder
     {
+        private IEnumerable<PropertyInfo> _properties;
         public InsertBuilder(ISqlDialect sqlDialect) : base(sqlDialect)
         {
         }
@@ -228,10 +229,18 @@ namespace QMap.SqlBuilder
             return this;
         }
 
-        public IInsertBuilder BuildInsertExcept<T>(T entity, Func<PropertyInfo, bool> exceptPropsFilter)
+        public IInsertBuilder BuildInsertExcept<T, TProperty>(T entity, Expression<Func<T, TProperty>> exceptProp)
         {
-            var columns = BuildColumns<T>(exceptPropsFilter);
+            MemberInfo? excludedMember = null;
+            
+            if(exceptProp.Body is MemberExpression member)
+            {
+                excludedMember = member.Member;
+            }
+
+            var columns = BuildColumns<T>(excludedMember);
             var values = BuildValues(entity, columns);
+
 
             Sql = $"insert into {typeof(T).Name} " +
                 $"({columns.Aggregate((c1, c2) => $"{c1},{c2}")})"
@@ -241,27 +250,27 @@ namespace QMap.SqlBuilder
             return this;
         }
 
-        private IEnumerable<string> BuildColumns<T>(Func<PropertyInfo, bool>? exceptPropsFilter = null)
+        private IEnumerable<string> BuildColumns<T>(MemberInfo? exceptProp = null)
         {
-            var properties = typeof(T)
+             _properties = typeof(T)
                   .GetProperties(BindingFlags.Public
                      | BindingFlags.GetProperty
                      | BindingFlags.SetProperty
                      | BindingFlags.Instance)
                   .AsEnumerable();
 
-            if (exceptPropsFilter != null)
+            if (exceptProp != null)
             {
-                properties = properties.Where(p => !exceptPropsFilter.Invoke(p));
+                _properties = _properties.Where(p => p.Name != exceptProp.Name);
             }
 
-            return properties
+            return _properties
                  .Select(p => p.Name);
         }
 
         private IEnumerable<string> BuildValues<T>(T entity, IEnumerable<string> columns)
         {
-            var properties = typeof(T)
+            _properties = typeof(T)
                   .GetProperties(BindingFlags.Public
                      | BindingFlags.GetProperty
                      | BindingFlags.SetProperty
@@ -269,7 +278,7 @@ namespace QMap.SqlBuilder
                   .AsEnumerable();
 
 #nullable disable
-            return properties
+            return _properties
                 .Where(p => columns.Contains(p.Name))
                 .Select(p =>
                 {

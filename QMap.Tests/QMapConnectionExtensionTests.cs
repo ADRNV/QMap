@@ -229,8 +229,7 @@ namespace QMap.Tests
 
                 connection.Open();
 
-                connection.Insert(entity, p => p.Name == "Id");
-
+                connection.Insert(entity, p => p.Id);
                 connection.Close();
 
                 context.Database.EnsureDeleted();

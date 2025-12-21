@@ -84,7 +84,7 @@ namespace QMap.SqlBuilder.Tests
                  .Create<TypesTestEntity>();
 
             var sql = queryBuilder
-                .BuildInsert(connectionFake, out var _, entity, (p) => p.Name == "Id");
+                .BuildInsert(connectionFake, out var _, entity, (p) => p.Id);
 
             _parsers.ToList().ForEach(p =>
             {
@@ -151,7 +151,7 @@ namespace QMap.SqlBuilder.Tests
             StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
             var sql = queryBuilder
-                .Delete<TypesTestEntity>()
+                .Delete<TypesTestEntity>(out var _)
                 .From(typeof(TypesTestEntity))
                 .Build();
         }
@@ -165,7 +165,7 @@ namespace QMap.SqlBuilder.Tests
                 StatementsBuilders queryBuilder = new StatementsBuilders(new SqlDialectBase());
 
                 var sql = queryBuilder
-                    .Delete<TypesTestEntity>()
+                    .Delete<TypesTestEntity>(out var _)
                     .Build();
             });
         }
@@ -177,7 +177,7 @@ namespace QMap.SqlBuilder.Tests
             StatementsBuilders queryBuilder = new(new TSqlDialect());
 
             var sql = queryBuilder
-            .Delete<TypesTestEntity>()
+            .Delete<TypesTestEntity>(out var _)
                 .From(typeof(TypesTestEntity))
                 .Build();
 
@@ -196,7 +196,7 @@ namespace QMap.SqlBuilder.Tests
             StatementsBuilders queryBuilder = new(new SqlDialectBase());
 
             var sql = queryBuilder
-                .Delete<TypesTestEntity>()
+                .Delete<TypesTestEntity>(out var _)
                 .From(typeof(TypesTestEntity))
                 .Where<TypesTestEntity>((TypesTestEntity t) => t.Id < 0, out var parameters)
                 .Build();

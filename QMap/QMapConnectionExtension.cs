@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace QMap
 {
@@ -34,6 +35,30 @@ namespace QMap
             return queryMapper.Map<T>(command.ExecuteReader());
         }
 
+        /// <summary>
+        /// Execute query and map to <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection">Connection</param>
+        /// <param name="sql">Qery text</param>
+        /// <param name="customMapper">Custom mapper if required, else uses base implementation"/></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Query<T>(this IQMapConnection connection, string sql, object[] parameters, IEntityMapper? customMapper = null) where T : class, new()
+        {
+            var mapper = _mappersCache.GetOrAdd(typeof(T),
+                (customMapper is null ? new EntityMapper() : customMapper));
+
+            var queryMapper = new QueryMapperBase(mapper);
+
+            var parametrizedString = FormattableStringFactory.Create(sql, parameters);
+            
+            var command = connection.CreateCommand();
+            
+            command.CommandText = parametrizedString.ToString();
+
+            return queryMapper.Map<T>(command.ExecuteReader());
+        }
+
         public static IEnumerable<T> Where<T>(this IQMapConnection connection, LambdaExpression predicate, IEntityMapper? customMapper = null) where T : class, new()
         {
             var mapper = _mappersCache.GetOrAdd(typeof(T),
@@ -55,7 +80,7 @@ namespace QMap
             return queryMapper.Map<T>(command.ExecuteReader());
         }
 
-        public static void Insert<T>(this IQMapConnection connection, T entity, Func<PropertyInfo, bool> exceptProperty)
+        public static void Insert<T, TProperty>(this IQMapConnection connection, T entity, Expression<Func<T, TProperty>> exceptProperty)
         {
             var command = connection.CreateCommand();
             var sql = new StatementsBuilders(connection.Dialect)
@@ -103,12 +128,16 @@ namespace QMap
         {
             var command = connection.CreateCommand();
             var sql = new StatementsBuilders(connection.Dialect)
-                .Delete<T>()
+                .Delete<T>(out var parameters)
                 .From(typeof(T))
-                .Where<T>(predicate, out var parameters)
+                .Where<T>(predicate, out var parameters1)
                 .Build();
 
+            var allParameters = parameters.AsEnumerable().Concat(parameters1).ToDictionary((p) => p.Key, (p) => p.Value);
+
             command.CommandText = sql;
+
+            connection.Dialect.BuildParameters(command, allParameters);
 
             command.ExecuteNonQuery();
         }

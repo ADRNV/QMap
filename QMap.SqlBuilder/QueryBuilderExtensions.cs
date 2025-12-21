@@ -55,10 +55,14 @@ namespace QMap.SqlBuilder
             return builder;
         }
 
-        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder)
+        public static IDeleteBuilder Delete<T>(this IQueryBuilder queryBuilder, out Dictionary<string, object> parameters)
         {
-            return new DeleteBuilder(queryBuilder.SqlDialect)
+            var builder = new DeleteBuilder(queryBuilder.SqlDialect)
                 .BuildDelete<T>();
+
+            parameters = builder.Parameters;
+
+            return builder;
         }
 
         public static string Build(this IQueryBuilder queryBuilder)
@@ -66,10 +70,10 @@ namespace QMap.SqlBuilder
             return queryBuilder.Build();
         }
 
-        public static string BuildInsert<T>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Func<PropertyInfo, bool> exceptProperty)
+        public static string BuildInsert<T, TProperty>(this IQueryBuilder queryBuilder, IQMapConnection connection, out Dictionary<string, object> parameters, T entity, Expression<Func<T, TProperty>> exceptProp)
         {
             var builder = new InsertBuilder(queryBuilder.SqlDialect)
-                .BuildInsertExcept(entity, exceptProperty);
+                .BuildInsertExcept(entity, exceptProp);
 
             parameters = builder.Parameters;
 

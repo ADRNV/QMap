@@ -301,7 +301,7 @@ namespace QMap.Tests
                 var newValue = new Random().Next();
                 entity.IntField = newValue;
                 //TSQL errors when parse True constant
-                connection.Update<TypesTestEntity, int>(() => entity.IntField, newValue, (TypesTestEntity e) => e.Id == entity.Id);
+                connection.Update<TypesTestEntity, int>((e) => entity.IntField, newValue, (TypesTestEntity e) => e.Id == entity.Id);
 
                 Assert.True(context.TypesTestEntity.Find(new object[] {entity.Id}).IntField == newValue);
 
@@ -342,7 +342,7 @@ namespace QMap.Tests
                 connection.Open();
 
                 //TSQL errors when parse True constant
-                connection.Update<TypesTestEntity, int>(() => updateEntity.IntField, newValue,(TypesTestEntity e) => e.Id == updateEntity.Id);
+                connection.Update<TypesTestEntity, int>((e) => updateEntity.IntField, newValue,(TypesTestEntity e) => e.Id == updateEntity.Id);
 
                 Assert.True(context.TypesTestEntity.Find(new object[] { updateEntity.Id }).IntField == updateEntity.IntField);
                 Assert.True(context.TypesTestEntity.Where((e) => e.Id != updateEntity.Id).All(e => e.IntField != newValue));
@@ -461,7 +461,7 @@ namespace QMap.Tests
 
                 context.TypesTestEntity.Add(entity);
                 context.SaveChanges();
-                connection.Update<TypesTestEntity, string>(() => entity.StringField, "\'DROP TABLE TypesTestEntity;--", (TypesTestEntity t) => t.IntField > 0);
+                connection.Update<TypesTestEntity, string>((e) => entity.StringField, "\'DROP TABLE TypesTestEntity;--", (TypesTestEntity t) => t.IntField > 0);
                 
                 context.TypesTestEntity.Count();
             });
@@ -490,7 +490,7 @@ namespace QMap.Tests
 
                 context.TypesTestEntity.Add(entity);
                 context.SaveChanges();
-                connection.Update<TypesTestEntity, string>(() => entity.StringField, "\'DROP TABLE TypesTestEntity;--", (TypesTestEntity t) => t.StringField != "\'DROP TABLE TypesTestEntity;--");
+                connection.Update<TypesTestEntity, string>((e) => entity.StringField, "\'DROP TABLE TypesTestEntity;--", (TypesTestEntity t) => t.StringField != "\'DROP TABLE TypesTestEntity;--");
 
                 context.TypesTestEntity.Count();
             });

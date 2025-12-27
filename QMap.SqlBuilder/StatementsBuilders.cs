@@ -296,7 +296,7 @@ namespace QMap.SqlBuilder
         {
         }
 
-        public IUpdateBuilder BuildUpdate<T, V>(Expression<Func<V>> propertySelector, V value)
+        public IUpdateBuilder BuildUpdate<T, TProperty>(Expression<Func<T ,TProperty>> propertySelector, TProperty value)
         {
             var memberExpression = propertySelector.Body as MemberExpression;
 

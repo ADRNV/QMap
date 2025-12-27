@@ -106,12 +106,12 @@ namespace QMap
             command.ExecuteNonQuery();
         }
 
-        public static void Update<T, V>(this IQMapConnection connection, Expression<Func<V>> propertySelector, V value, LambdaExpression predicate) where T : class, new()
+        public static void Update<T, TProperty>(this IQMapConnection connection, Expression<Func<T, TProperty>> propertySelector, TProperty value, LambdaExpression predicate) where T : class, new()
         {
             var command = connection.CreateCommand();
 
             var sql = new StatementsBuilders(connection.Dialect)
-                .Update<T,V>(connection, out var parameters, propertySelector, value)
+                .Update<T, TProperty>(connection, out var parameters, propertySelector, value)
                 .Where<T>(predicate, out var parameters1)
                 .Build();
             

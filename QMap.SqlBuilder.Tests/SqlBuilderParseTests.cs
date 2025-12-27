@@ -110,7 +110,7 @@ namespace QMap.SqlBuilder.Tests
             entity.IntField = 2048;
 
             var sql = queryBuilder
-                .Update<TypesTestEntity, int>(connectionFake, out var _, () => entity.IntField, entity.IntField)
+                .Update<TypesTestEntity, int>(connectionFake, out var _, (e) => entity.IntField, entity.IntField)
                 .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0, out var parameters)
                 .Build();
 
@@ -138,7 +138,7 @@ namespace QMap.SqlBuilder.Tests
             Assert.Throws<InvalidOperationException>(() =>
             {
                var sql = queryBuilder
-                .Update<TypesTestEntity, string>(connectionFake, out var _, () => entity.ToString(), "")
+                .Update<TypesTestEntity, string>(connectionFake, out var _, (e) => entity.ToString(), "")
                 .Where<TypesTestEntity>((TypesTestEntity e) => e.Id > 0, out var parameters)
                 .Build();
             });

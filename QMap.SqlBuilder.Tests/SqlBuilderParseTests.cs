@@ -189,6 +189,55 @@ namespace QMap.SqlBuilder.Tests
             });
         }
 
+        [Trait("SQL", "Select")]
+        [Fact]
+        public void SelectWithProjection_GeneratesSpecifiedColumns()
+        {
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
+
+            var sql = queryBuilder
+                .Select((TypesTestEntity e) => new { e.Id, e.StringField })
+                .From(typeof(TypesTestEntity))
+                .Build();
+
+            Assert.Contains("Id", sql);
+            Assert.Contains("StringField", sql);
+            Assert.DoesNotContain("*", sql);
+        }
+
+        [Trait("SQL", "Select")]
+        [Fact]
+        public void SelectWithProjection_BuildsWithoutSyntaxErrorsInAllParsers()
+        {
+            StatementsBuilders queryBuilder = new(new TSqlDialect());
+
+            var sql = queryBuilder
+                .Select((TypesTestEntity e) => new { e.Id, e.StringField })
+                .From(typeof(TypesTestEntity))
+                .Build();
+
+            _parsers.ToList().ForEach(p =>
+            {
+                var errors = p.Parse(sql);
+                Assert.Null(errors);
+            });
+        }
+
+        [Trait("SQL", "Select")]
+        [Fact]
+        public void SelectWithSingleProperty_GeneratesCorrectColumn()
+        {
+            StatementsBuilders queryBuilder = new(new SqlDialectBase());
+
+            var sql = queryBuilder
+                .Select((TypesTestEntity e) => e.StringField)
+                .From(typeof(TypesTestEntity))
+                .Build();
+
+            Assert.Contains("StringField", sql);
+            Assert.DoesNotContain("*", sql);
+        }
+
         [Trait("SQL", "Delete")]
         [Fact]
         public void DeleteFullSqlBuidWitoutSyntaxErrosInAllParsers()

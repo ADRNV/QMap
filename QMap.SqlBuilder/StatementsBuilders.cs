@@ -72,11 +72,33 @@ namespace QMap.SqlBuilder
 
         public ISelectBuilder BuidSelect(Expression type)
         {
-            //TODO Add selecting by members list and expression
             Sql += "select * ";
 
             return this;
         }
+
+        public ISelectBuilder BuidSelect<T, TResult>(Expression<Func<T, TResult>> selector)
+        {
+            var columns = ExtractColumns(selector.Body);
+            Sql += $"select {string.Join(", ", columns)} ";
+
+            return this;
+        }
+
+        private static IEnumerable<string> ExtractColumns(Expression body) =>
+            body switch
+            {
+                NewExpression newExpr => newExpr.Arguments
+                    .OfType<MemberExpression>()
+                    .Select(m => m.Member.Name),
+                MemberInitExpression memberInit => memberInit.Bindings
+                    .OfType<MemberAssignment>()
+                    .Where(b => b.Expression is MemberExpression)
+                    .Select(b => ((MemberExpression)b.Expression).Member.Name),
+                MemberExpression single => new[] { single.Member.Name },
+                _ => throw new InvalidOperationException(
+                    "Unsupported selector. Use: e => new { e.Prop1, e.Prop2 } or e => e.Prop")
+            };
 
         public string Build()
         {

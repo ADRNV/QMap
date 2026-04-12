@@ -124,6 +124,23 @@ namespace QMap
             command.ExecuteNonQuery();
         }
 
+        public static IEnumerable<TResult> Select<TSource, TResult>(
+            this IQMapConnection connection,
+            Expression<Func<TSource, TResult>> selector) where TSource : class, new()
+        {
+            var projectionMapper = new ProjectionMapper<TSource, TResult>(selector);
+
+            var command = connection.CreateCommand();
+            var sql = new StatementsBuilders(connection.Dialect)
+                .Select(selector)
+                .From(typeof(TSource))
+                .Build();
+
+            command.CommandText = sql;
+
+            return projectionMapper.Map(command.ExecuteReader());
+        }
+
         public static void Delete<T>(this IQMapConnection connection, LambdaExpression predicate, IEntityMapper? customMapper = null) where T : class, new()
         {
             var command = connection.CreateCommand();

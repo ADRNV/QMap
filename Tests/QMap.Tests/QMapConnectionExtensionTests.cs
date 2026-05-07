@@ -416,6 +416,69 @@ namespace QMap.Tests
             });
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(3)]
+        public void SelectProjection_ReturnsCorrectRowCount(int count)
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entities = new Fixture()
+                    .Build<TypesTestEntity>()
+                    .Without(t => t.Id)
+                    .CreateMany(count);
+
+                var context = c.GetDbContext<TestContext>();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                context.TypesTestEntity.AddRange(entities);
+                context.SaveChanges();
+
+                using var connection = c.Create();
+                connection.Open();
+
+                var result = connection
+                    .Select((TypesTestEntity e) => new { e.Id, e.StringField })
+                    .ToList();
+
+                Assert.Equal(count, result.Count);
+
+                connection.Close();
+                context.Database.EnsureDeleted();
+            });
+        }
+
+        [Fact]
+        public void SelectProjection_MapsValuesCorrectly()
+        {
+            _connectionFactories.ForEach(c =>
+            {
+                var entity = new Fixture()
+                    .Build<TypesTestEntity>()
+                    .Without(t => t.Id)
+                    .Create();
+
+                var context = c.GetDbContext<TestContext>();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                context.TypesTestEntity.Add(entity);
+                context.SaveChanges();
+
+                using var connection = c.Create();
+                connection.Open();
+
+                var result = connection
+                    .Select((TypesTestEntity e) => new { e.StringField, e.IntField })
+                    .Single();
+
+                Assert.Equal(entity.StringField, result.StringField);
+                Assert.Equal(entity.IntField, result.IntField);
+
+                connection.Close();
+                context.Database.EnsureDeleted();
+            });
+        }
+
         [Fact]
         public void Select_Should_Not_Drop_Statemant()
         {

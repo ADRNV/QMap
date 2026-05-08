@@ -8,5 +8,6 @@ namespace QMap.SqlBuilder.Abstractions
 
         public ISelectBuilder BuidSelect(Expression type);
 
+        public ISelectBuilder BuidSelect<T, TResult>(Expression<Func<T, TResult>> selector);
     }
 }

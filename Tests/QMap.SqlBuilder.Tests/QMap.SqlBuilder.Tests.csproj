@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QMap.SqlBuilder\QMap.SqlBuilder.csproj" />
+    <ProjectReference Include="..\..\QMap.SqlBuilder\QMap.SqlBuilder.csproj" />
     <ProjectReference Include="..\QMap.Tests.Share\QMap.Tests.Share.csproj" />
   </ItemGroup>
 

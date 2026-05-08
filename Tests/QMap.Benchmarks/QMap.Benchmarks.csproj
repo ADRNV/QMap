@@ -19,9 +19,9 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QMap.SqlServer\QMap.SqlServer.csproj" />
+    <ProjectReference Include="..\..\QMap.SqlServer\QMap.SqlServer.csproj" />
+    <ProjectReference Include="..\..\QMap\QMap.csproj" />
     <ProjectReference Include="..\QMap.Tests.Share\QMap.Tests.Share.csproj" />
-    <ProjectReference Include="..\QMap\QMap.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QMap.Core\QMap.Core.csproj" />
-    <ProjectReference Include="..\QMap.SqlLite\QMap.Sqlite.csproj" />
-    <ProjectReference Include="..\QMap.SqlServer\QMap.SqlServer.csproj" />
+    <ProjectReference Include="..\..\QMap.Core\QMap.Core.csproj" />
+    <ProjectReference Include="..\..\QMap.SqlLite\QMap.Sqlite.csproj" />
+    <ProjectReference Include="..\..\QMap.SqlServer\QMap.SqlServer.csproj" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />

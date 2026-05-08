@@ -17,8 +17,10 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 10.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Run Unit Tests
+      run: dotnet test Tests/QMap.SqlBuilder.Module.Tests/QMap.SqlBuilder.Module.Tests.csproj --no-build --verbosity normal
